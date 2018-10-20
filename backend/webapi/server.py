@@ -8,32 +8,34 @@ app = Flask(__name__)
 CORS(app)
 
 simulator = None
+conf = yaml.load(open('../conf/conf.yaml'))
 
 
-@app.route('/simulators')
+@app.route('/get_simulators')
 def simulators():
-    simulators = get_simulators()
-    res = jsonify({'results': 'result'})
+    simulators = list(conf['SIMULATORS'].keys())
+    print(simulators)
+    res = jsonify({'simulators': simulators})
     res.status_code = 200
     return res
 
 
-@app.route('/run')
+@app.route('/run_simulation')
 def run():
     """シミュレートを実行する
     """
     simulator_name = request.args.get('simulator')
 
 
-@app.route('/stop')
+@app.route('/stop_simulation')
 def stop():
     """シミュレートを一時停止する
     """
     simulator.stop()
 
 
-@app.route('/end')
-def stop():
+@app.route('/end_simulation')
+def end():
     """シミュレートを終了
     """
     simulator.end()
@@ -54,13 +56,17 @@ def get_param_names():
     """指定のシミュレータのパラメータ名リストを返す。
     """
     simulator_name = request.args.get('simulator')
+    print(simulator_name)
     try:
-        conf = dict(open('../conf/conf.yaml', "r+"))
         param_names = conf['SIMULATORS'][simulator_name]['PARAM_NAMES']
     except Exception as e:
+        print(e)
+        res = jsonify({
+            'error': e
+        })
         res.status_code = 500
         return res
-    res = jsonify(dict(param_names))
+    res = jsonify({'param_names': dict(param_names)})
     res.status_code = 200
     return res
 

@@ -1,4 +1,3 @@
-
 SIMULATORS:
   bouncing_ball:
     PATH: simulators/bouncing_ball/bouncing_ball.py
@@ -18,3 +17,11 @@ SIMULATORS:
         vel_z,
         time
       ]
+
+  flow_particles:
+
+  ising_spin:
+
+PARAMETER_INPUT_TYPE:
+  textbox
+  button
