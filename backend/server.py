@@ -85,5 +85,15 @@ def get_param_names():
     return res
 
 
+@app.route('/get_objects')
+def get_objects():
+    simulator_name = request.args.get('simulator')
+    objects = conf['SIMULATORS'][simulator_name]['OBJECTS']
+    print(objects)
+    res = jsonify({'objects': dict(objects)})
+    res.status_code = 200
+    return res
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

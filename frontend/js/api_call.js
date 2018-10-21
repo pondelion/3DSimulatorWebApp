@@ -20,3 +20,8 @@ function setSimulator(ip, port, callback, simulator) {
     var endpoint = "http://" + ip + ":" + port + "/set_simulator?simulator=" + simulator;
     getRequest(endpoint, callback);
 }
+
+function getObjects(ip, port, callback, simulator) {
+  var endpoint = "http://" + ip + ":" + port + "/get_objects?simulator=" + simulator;
+  getRequest(endpoint, callback);
+}

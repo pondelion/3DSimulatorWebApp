@@ -1,15 +1,15 @@
 SIMULATORS:
   bouncing_ball:
-    MODULE_NAME: simulators.bouncing_ball.bouncing_ball
+    MODULE_NAME: lib.simulators.bouncing_ball.bouncing_ball
     CLASS_NAME: BouncingBall
     PARAM_NAMES: 
       initial_height:
         param_type: textbox
-        max: 10
+        max: 50
         min: 1
-        default: 10
+        default: 20
         step: 0.1
-      initial_vel_z:
+      initial_vel_y:
         param_type: textbox
         max: 100
         min: 10
@@ -46,7 +46,7 @@ SIMULATORS:
         param_type: textbox
         max: 5
         min: 1
-        default: 1
+        default: 3
         step: 0.1
       ball_mass:
         param_type: textbox
@@ -63,8 +63,10 @@ SIMULATORS:
     OBJECTS:
       ball:
         object_type: sphere
-        initial_x: 0
-        initial_y: 0
+        initial_pos_x: 0
+        initial_pos_y: 20
+        initial_pos_z: 0
+        radius: 3
 
   flow_particles:
 

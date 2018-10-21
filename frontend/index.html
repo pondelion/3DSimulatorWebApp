@@ -16,13 +16,14 @@
     <div id="3DScene"></div>
 
     <script type="text/javascript">
-
-    var isSimulating = false;
-    var ip = "127.0.0.1";
-    var port = "5000";
-    var paramNames = {};
     
     function init() {
+        var isSimulating = false;
+        var ip = "127.0.0.1";
+        var port = "5000";
+        var paramNames = {};
+        var rotateCamera = false;
+
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         scene.add(camera);
@@ -47,7 +48,7 @@
 
         camera.position.x = -30;
         camera.position.y = 40;
-        camera.position.z = 30;
+        camera.position.z = 40;
         camera.lookAt(scene.position);
 
         var ambientLight = new THREE.AmbientLight(0x0c0c0c);
@@ -65,7 +66,7 @@
             this.port = port;
             this.simulators = " ";
             this.rotate_camera = false;
-            this.run_pause = function() {isSimulating = !isSimulating;};
+            this.run = false;
         };
 
         gui.add(controls, "ip").onChange(function(newIP) {
@@ -74,7 +75,9 @@
         gui.add(controls, "port").onChange(function(newPORT) {
             port = newPORT;
         });
-        gui.add(controls, "rotate_camera");
+        gui.add(controls, "rotate_camera").onChange(function() {
+            rotateCamera = !rotateCamera;
+        });
 
         getParamNamesCallback = function() {
             if (this.readyState == 4) {
@@ -96,12 +99,29 @@
                     }
                 }
 
-                gui.add(controls, 'run_pause');
+                gui.add(controls, 'run');
             }
         };
 
         setSimulatorCallback = function() {
 
+        };
+
+        getObjectsCallback = function() {
+            if (this.readyState == 4) {
+                console.log(this.responseText);
+                var objects = JSON.parse(this.responseText).objects;
+                for (var object in objects) {
+                    console.log(objects[object].object_type);
+                    if (objects[object].object_type == "sphere") {
+                        pos_x = objects[object].initial_pos_x;
+                        pos_y = objects[object].initial_pos_y;
+                        pos_z = objects[object].initial_pos_z;
+                        radius = objects[object].radius;
+                        addSphere(scene, pos_x, pos_y, pos_z, radius)
+                    }
+                }
+            };
         };
         
         getSimulatorsCallback = function() {
@@ -111,9 +131,9 @@
                 gui.add(controls, "simulators")
                     .options(JSON.parse(this.responseText).simulators)
                     .onChange(function(selectedSimulator) {
-                        alert(selectedSimulator);
-                        setSimulator(ip, port, setSimulatorCallback, selectedSimulator)
-                        getParamNames(ip, port, getParamNamesCallback, selectedSimulator)
+                        setSimulator(ip, port, setSimulatorCallback, selectedSimulator);
+                        getParamNames(ip, port, getParamNamesCallback, selectedSimulator);
+                        getObjects(ip, port, getObjectsCallback, selectedSimulator);
                     });
             }
         };
@@ -122,10 +142,32 @@
         document.getElementById("3DScene").appendChild(renderer.domElement);
 
         render();
-
+        var count = 0;
+  
         function render() {
+            count += 1;
+            if (rotateCamera) {
+                camera.position.x = 40 * Math.cos(count*0.01);
+                camera.position.z = 40 * Math.sin(count*0.01);
+                camera.lookAt(scene.position);
+            }
+
             requestAnimationFrame(render);
             renderer.render(scene, camera);
+        }
+
+        function addSphere(scene, pos_x, pos_y, pos_z, radius) {
+            var sphereRadius = radius;
+            var sphereGeometry = new THREE.SphereGeometry(sphereRadius, 20, 20);
+            var sphereMaterial = new THREE.MeshLambertMaterial({color: 0x22DD22});
+            var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+            sphere.position.x = pos_x;
+            sphere.position.y = pos_y;
+            sphere.position.z = pos_z;
+            sphere.castShadow = true;
+
+            scene.add(sphere);
         }
     }
 
