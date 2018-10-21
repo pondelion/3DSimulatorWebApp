@@ -3,14 +3,43 @@ SIMULATORS:
     PATH: simulators/bouncing_ball/bouncing_ball.py
     CLASS_NAME: BouncingBall
     PARAM_NAMES: 
-      initial_height: textbox
-      initial_vel_z: textbox
-      resistance_coef: textbox
-      max_time: textbox
-      repeat: button
-      restitution_coef: textbox
-      ground_height: textbox
-      ball_radius: textbox
+      initial_height:
+        type: textbox
+        max: 10
+        min: 1
+        default: 10 
+      initial_vel_z:
+        type: textbox
+        max: 100
+        min: 10
+        default: 20
+      resistance_coef: 
+        type: textbox
+        max: 10
+        min: 0
+        default: 1
+      max_time:
+        type: textbox
+        max: 1000
+        min: 10
+        default: 30
+      repeat:
+        type: button
+      restitution_coef:
+        type: textbox
+        max: 10
+        min: 0
+        default: 1
+      ground_height:
+        type: textbox
+        max: 10
+        min: -10
+        default: 0
+      ball_radius:
+        type: textbox
+        max: 5
+        min: 1
+        default: 1
     STATE_NAMES:
       [
         height,

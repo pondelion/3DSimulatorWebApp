@@ -50,21 +50,62 @@
         spotLight.castShadow = true;
         scene.add(spotLight);
 
+        var is_simulating = false;
+        var ip = "127.0.0.1";
+        var port = "5000";
+        var paramNames = {};
+
         gui = new dat.GUI();
         
         var controls = new function () {
+            this.ip = ip;
+            this.port = port;
             this.simulators = " ";
+            this.run_pause = function() {is_simulating = !is_simulating;};
+        };
+
+        gui.add(controls, "ip").onChange(function(newIP) {
+            ip = newIP;
+        });
+        gui.add(controls, "port").onChange(function(newPORT) {
+            port = newPORT;
+        });
+
+        getParamNamesCallback = function() {
+            if (this.readyState == 4) {
+                console.log(this.responseText);
+                var paramNames = JSON.parse(this.responseText).param_names;
+                for (var paramName in paramNames) {
+                    if (paramNames[paramName].type == "textbox") {
+                        controls[paramName] = paramNames[paramName].default;
+                        gui.add(controls, paramName)
+                            .min(paramNames[paramName].min)
+                            .max(paramNames[paramName].max)
+                            .step(1);
+                    } else if (paramNames[paramName].type == "button") {
+                        controls[paramName] = function() {};
+                        gui.add(controls, paramName)
+                    }
+                }
+
+                gui.add(controls, 'run_pause');
+            }
         };
         
-        callback = function() {
+        getSimulatorsCallback = function() {
             console.log("Ready state: " + this.readyState);
             if (this.readyState == 4) {
                 console.log(this.status);
                 console.log(this.responseText);
-                gui.add(controls, "simulators").options(JSON.parse(this.responseText).simulators);
+                gui.add(controls, "simulators")
+                    .options(JSON.parse(this.responseText).simulators)
+                    .onChange(function(selectedSimulator) {
+                        alert(selectedSimulator);
+                        getParamNames(ip, port, getParamNamesCallback, selectedSimulator)
+                    });
             }
         };
-        get_simulators("127.0.0.1", "5000", callback);
+        getSimulators(ip, port, getSimulatorsCallback);
 
         document.getElementById("3DScene").appendChild(renderer.domElement);
 
