@@ -6,7 +6,10 @@
   <title>3D simulator</title>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.3/dat.gui.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.8/c3.min.css'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.8/c3.min.js'></script>
   <script  src="js/api_call.js"></script>
+  <script  src="js/graph.js"></script>
 </head>
 
 <body>
@@ -61,6 +64,7 @@
             this.ip = ip;
             this.port = port;
             this.simulators = " ";
+            this.rotate_camera = false;
             this.run_pause = function() {isSimulating = !isSimulating;};
         };
 
@@ -70,6 +74,7 @@
         gui.add(controls, "port").onChange(function(newPORT) {
             port = newPORT;
         });
+        gui.add(controls, "rotate_camera");
 
         getParamNamesCallback = function() {
             if (this.readyState == 4) {
@@ -81,9 +86,12 @@
                         gui.add(controls, paramName)
                             .min(paramNames[paramName].min)
                             .max(paramNames[paramName].max)
-                            .step(1);
+                            .step(paramNames[paramName].step);
                     } else if (paramNames[paramName].param_type == "button") {
                         controls[paramName] = function() {};
+                        gui.add(controls, paramName)
+                    } else if (paramNames[paramName].param_type == "checkbox") {
+                        controls[paramName] = paramNames[paramName].default
                         gui.add(controls, paramName)
                     }
                 }

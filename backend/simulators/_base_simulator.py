@@ -46,7 +46,7 @@ class BaseSimulator:
         raise NotImplementedError()
 
     @abstractclassmethod
-    def get_states():
-        """状態(位置など)を返す
+    def get_states(n=1):
+        """最新状態(位置など)をn個返す
         """
         raise NotImplementedError()
