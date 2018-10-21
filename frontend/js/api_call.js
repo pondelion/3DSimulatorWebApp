@@ -15,3 +15,8 @@ function getParamNames(ip, port, callback, simulator) {
     var endpoint = "http://" + ip + ":" + port + "/get_param_names?simulator=" + simulator;
     getRequest(endpoint, callback);
 }
+
+function setSimulator(ip, port, callback, simulator) {
+    var endpoint = "http://" + ip + ":" + port + "/set_simulator?simulator=" + simulator;
+    getRequest(endpoint, callback);
+}
