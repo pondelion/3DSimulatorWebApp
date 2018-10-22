@@ -1,5 +1,6 @@
 from .._base_simulator import BaseSimulator
 from ...utils.util import load_params
+from ...solver.solver import euler
 
 
 class BouncingBall(BaseSimulator):
@@ -21,7 +22,7 @@ class BouncingBall(BaseSimulator):
         if self._is_running is False:
             return
         self._time += dt
-        self._vel_y += BouncingBall.GRAVITY_ACCEL * dt / self._params['ball_mass']
+        self._vel_y = euler(self._vel_y, self._force(), dt)
         self._height += self._vel_y * dt
         if (self._height - self._params['ground_height']) < self._params['ball_radius']:
             self._height = self._params['ground_height'] + self._params['ball_radius']
@@ -29,8 +30,9 @@ class BouncingBall(BaseSimulator):
         self._height_history.append(self._height)
         self._vel_y_history.append(self._vel_y)
         self._time_history.append(self._time)
+        #print('t : {}\nvel_y : {}\nheight : {}'.format(self._time, self._vel_y, self._height))
 
-    def get_states(n=1):
+    def get_states(self, n=1):
         """最新状態(位置など)をn個返す
         """
         states = {
@@ -39,3 +41,6 @@ class BouncingBall(BaseSimulator):
             'time': self._time_history[-n:]
         }
         return states
+
+    def _force(self):
+        return BouncingBall.GRAVITY_ACCEL / self._params['ball_mass']

@@ -2,12 +2,13 @@ from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 import yaml
 import logging
+from lib.simulator_runner.multithread import SimulatorRunner
 
 
 app = Flask(__name__)
 CORS(app)
 
-simulator = None
+simulator_runner = SimulatorRunner()
 conf = yaml.load(open('./conf/conf.yaml'))
 
 
@@ -22,15 +23,16 @@ def get_simulators():
 
 @app.route('/set_simulator')
 def set_simulator():
+    ip = request.remote_addr
     simulator_name = request.args.get('simulator')
-    module_name = conf['SIMULATORS'][simulator_name]['MODULE_NAME']
-    class_name = conf['SIMULATORS'][simulator_name]['CLASS_NAME']
-    module = __import__(module_name, globals(), locals(), [class_name], 0)
-    simulator_class = getattr(module, class_name)
-    simulator = simulator_class()
+    simulator_runner.create_simulator(
+        ip,
+        simulator_name,
+        conf['SIMULATORS'][simulator_name]['MODULE_NAME'],
+        conf['SIMULATORS'][simulator_name]['CLASS_NAME']
+    )
     res = Response()
     res.status_code = 200
-    print(simulator)
     return res
 
 
@@ -38,23 +40,36 @@ def set_simulator():
 def run_simulation():
     """シミュレートを実行する
     """
+    ip = request.remote_addr
     simulator_name = request.args.get('simulator')
+    simulator_runner.run(ip, simulator_name)
+    res = Response()
+    res.status_code = 200
+    return res
 
 
 @app.route('/stop_simulation')
 def stop_simulation():
     """シミュレートを一時停止する
     """
-    simulator.stop()
+    ip = request.remote_addr
+    simulator_name = request.args.get('simulator')
+    simulator_runner.stop(ip, simulator_name)
+    res = Response()
+    res.status_code = 200
+    return res
 
 
-@app.route('/end_simulation')
-def end_simulation():
+@app.route('/finish_simulation')
+def finish_simulation():
     """シミュレートを終了
     """
-    simulator.end()
-    del simulator
-    simulator = None
+    ip = request.remote_addr
+    simulator_name = request.args.get('simulator')
+    simulator_runner.finish(ip, simulator_name)
+    res = Response()
+    res.status_code = 200
+    return res
 
 
 @app.route('/set_params')
@@ -63,6 +78,9 @@ def set_params():
     """
     params = request.args.get('params')
     simulator.set_params(params)
+    res = Response()
+    res.status_code = 200
+    return res
 
 
 @app.route('/get_param_names')
@@ -90,7 +108,32 @@ def get_objects():
     simulator_name = request.args.get('simulator')
     objects = conf['SIMULATORS'][simulator_name]['OBJECTS']
     print(objects)
-    res = jsonify({'objects': dict(objects)})
+    res = jsonify({
+        'objects': dict(objects)
+    })
+    res.status_code = 200
+    return res
+
+
+@app.route('/get_states')
+def get_states():
+    n = request.args.get('n', default=1)
+    simulator_name = request.args.get('simulator')
+    ip = request.remote_addr
+    states = simulator_runner.get_states(ip, simulator_name, int(n))
+    res = jsonify({
+        'states': states
+    })
+    res.status_code = 200
+    return res
+
+
+@app.route('/init_simulation')
+def init_simulation():
+    ip = request.remote_addr
+    simulator_name = request.args.get('simulator')
+    simulator_runner.init(ip, simulator_name)
+    res = Response()
     res.status_code = 200
     return res
 

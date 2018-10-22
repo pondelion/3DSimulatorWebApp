@@ -6,6 +6,7 @@
   <title>3D simulator</title>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.3/dat.gui.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.8/c3.min.css'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.8/c3.min.js'></script>
   <script  src="js/api_call.js"></script>
@@ -14,8 +15,20 @@
 
 <body>
     <div id="3DScene"></div>
+    <div id="chart"></div>
 
     <script type="text/javascript">
+
+    var chart = c3.generate({
+        bindto: '#chart',
+        data: {
+            columns: [
+                ['data1', 30, 200, 100, 400, 150, 250],
+                ['data2', 130, 100, 140, 200, 150, 50]
+            ],
+            type: 'line'
+        }
+    });
     
     function init() {
         var isSimulating = false;
@@ -59,14 +72,17 @@
         spotLight.castShadow = true;
         scene.add(spotLight);
 
+        var sphere;
+
         gui = new dat.GUI();
         
         var controls = new function () {
             this.ip = ip;
             this.port = port;
-            this.simulators = " ";
+            this.simulators = "";
             this.rotate_camera = false;
             this.run = false;
+            this.init = function(){ initSimulation(ip, port, function () {}, controls.simulators);};
         };
 
         gui.add(controls, "ip").onChange(function(newIP) {
@@ -99,7 +115,14 @@
                     }
                 }
 
-                gui.add(controls, 'run');
+                gui.add(controls, 'run').onChange(function(checked) {
+                    if (checked) {
+                        runSimulation(ip, port, function () {}, controls.simulators);
+                    } else {
+                        stopSimulation(ip, port, function () {}, controls.simulators);
+                    }
+                });
+                gui.add(controls, 'init');
             }
         };
 
@@ -118,7 +141,7 @@
                         pos_y = objects[object].initial_pos_y;
                         pos_z = objects[object].initial_pos_z;
                         radius = objects[object].radius;
-                        addSphere(scene, pos_x, pos_y, pos_z, radius)
+                        sphere = addSphere(scene, pos_x, pos_y, pos_z, radius)
                     }
                 }
             };
@@ -149,7 +172,20 @@
             if (rotateCamera) {
                 camera.position.x = 40 * Math.cos(count*0.01);
                 camera.position.z = 40 * Math.sin(count*0.01);
-                camera.lookAt(scene.position);
+                camera.lookAt(sphere.position)
+            }
+
+            if (controls.simulators != "") {
+                if (count % 3 == 0) {
+                    getStatesCallback = function() {
+                        if (this.readyState == 4) {
+                            //console.log(this.responseText);
+                            var states = JSON.parse(this.responseText).states;
+                            sphere.position.y = states.height;
+                        }
+                    }
+                    getStates(ip, port, getStatesCallback, controls.simulators);
+                }
             }
 
             requestAnimationFrame(render);
@@ -168,6 +204,8 @@
             sphere.castShadow = true;
 
             scene.add(sphere);
+
+            return sphere;
         }
     }
 

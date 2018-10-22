@@ -7,13 +7,13 @@ SIMULATORS:
         param_type: textbox
         max: 50
         min: 1
-        default: 20
+        default: 10
         step: 0.1
       initial_vel_y:
         param_type: textbox
         max: 100
         min: 10
-        default: 20
+        default: 10
         step: 0.1
       resistance_coef: 
         param_type: textbox

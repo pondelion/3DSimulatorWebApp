@@ -8,6 +8,8 @@ class BaseSimulator:
         self._is_running = False
         self._params = {}
         self.init()
+        self._minimal_dt = 0.01
+        self._is_finished = False
 
     def run(self):
         """シミュレーションを開始する
@@ -19,7 +21,7 @@ class BaseSimulator:
         """
         self._is_running = False
 
-    def end(self):
+    def finish(self):
         """シミュレーションを終了する
         MUST : 継承クラスで実装
         """
@@ -29,7 +31,16 @@ class BaseSimulator:
     def set_params(params):
         """パラメータを設定する
         """
-        self._params = params
+        for key, val in params.items():
+            self._params[key] = val
+
+    @property
+    def is_running(self):
+        return self._is_running
+
+    @property
+    def minimal_dt(self):
+        return self._minimal_dt
 
     @abstractclassmethod
     def init(self):
