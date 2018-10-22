@@ -22,7 +22,7 @@ class BouncingBall(BaseSimulator):
         if self._is_running is False:
             return
         self._time += dt
-        self._vel_y = euler(self._vel_y, self._force(), dt)
+        self._vel_y = euler(self._vel_y, self._force()/self._params['ball_mass'], dt)
         self._height += self._vel_y * dt
         if (self._height - self._params['ground_height']) < self._params['ball_radius']:
             self._height = self._params['ground_height'] + self._params['ball_radius']
@@ -43,4 +43,4 @@ class BouncingBall(BaseSimulator):
         return states
 
     def _force(self):
-        return BouncingBall.GRAVITY_ACCEL
+        return self._params['ball_mass'] * BouncingBall.GRAVITY_ACCEL
