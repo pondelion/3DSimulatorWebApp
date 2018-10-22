@@ -43,4 +43,4 @@ class BouncingBall(BaseSimulator):
         return states
 
     def _force(self):
-        return BouncingBall.GRAVITY_ACCEL / self._params['ball_mass']
+        return BouncingBall.GRAVITY_ACCEL
