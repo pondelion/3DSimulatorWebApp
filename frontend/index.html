@@ -45,7 +45,7 @@
 
         var renderer = new THREE.WebGLRenderer();
 
-        renderer.setClearColor(new THREE.Color(0xEEEEEE));
+        renderer.setClearColor(new THREE.Color(0x222222));
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
 
@@ -97,17 +97,26 @@
             rotateCamera = !rotateCamera;
         });
 
+        var paramNames = {};
         getParamNamesCallback = function() {
             if (this.readyState == 4) {
                 console.log(this.responseText);
-                var paramNames = JSON.parse(this.responseText).param_names;
+                paramNames = JSON.parse(this.responseText).param_names;
                 for (var paramName in paramNames) {
                     if (paramNames[paramName].param_type == "textbox") {
                         controls[paramName] = paramNames[paramName].default;
                         gui.add(controls, paramName)
                             .min(paramNames[paramName].min)
                             .max(paramNames[paramName].max)
-                            .step(paramNames[paramName].step);
+                            .step(paramNames[paramName].step)
+                            .onChange(function(newValue) {
+                                //console.log(this);
+                                var params = {}
+                                for (var paramName in paramNames) {
+                                    params[this.property] = controls[this.property];
+                                }
+                                setParams(ip, port, function () {}, controls.simulators, params, 'numeric');
+                            });
                     } else if (paramNames[paramName].param_type == "button") {
                         controls[paramName] = function() {};
                         gui.add(controls, paramName)

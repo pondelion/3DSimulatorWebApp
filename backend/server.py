@@ -76,8 +76,16 @@ def finish_simulation():
 def set_params():
     """パラメータをセットする。
     """
-    params = request.args.get('params')
-    simulator.set_params(params)
+    args = dict(request.args)
+    simulator_name = args.pop('simulator')
+    data_type = args.pop('data_type')
+    params = {}
+    for key, val in args.items():
+        if data_type[0] == 'numeric':
+            params[key] = float(val[0])
+    print(params)
+    ip = request.remote_addr
+    simulator_runner.set_params(ip, simulator_name[0], params)
     res = Response()
     res.status_code = 200
     return res
@@ -128,6 +136,14 @@ def get_states():
     return res
 
 
+@app.route('/get_states_streaming')
+def get_states_streaming():
+    simulator_name = request.args.get('simulator')
+    ip = request.remote_addr
+    streming_func = simulator_runner.get_states_streaming_func(ip, simulator_name)
+    return Response(streming_func(), content_type='application/json')
+
+
 @app.route('/init_simulation')
 def init_simulation():
     ip = request.remote_addr
@@ -139,4 +155,4 @@ def init_simulation():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', threaded=True)

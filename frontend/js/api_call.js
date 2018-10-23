@@ -45,3 +45,12 @@ function initSimulation(ip, port, callback, simulator) {
     var endpoint = "http://" + ip + ":" + port + "/init_simulation?simulator=" + simulator;
     getRequest(endpoint, callback);
 }
+
+function setParams(ip, port, callback, simulator, params, data_type) {
+    var endpoint = "http://" + ip + ":" + port + "/set_params?simulator=" + simulator;
+    for (param_name in params) {
+        endpoint += "&" + param_name + "=" + params[param_name];
+    }
+    endpoint += "&data_type=" + data_type;
+    getRequest(endpoint, callback);
+}

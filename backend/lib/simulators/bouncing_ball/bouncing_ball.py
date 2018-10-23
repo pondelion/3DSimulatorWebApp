@@ -1,5 +1,4 @@
 from .._base_simulator import BaseSimulator
-from ...utils.util import load_params
 from ...solver.solver import euler
 
 
@@ -7,11 +6,11 @@ class BouncingBall(BaseSimulator):
     GRAVITY_ACCEL = -9.8
     SIMULATOR_NAME = 'bouncing_ball'
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, simulator_name):
+        super().__init__(simulator_name)
 
     def init(self):
-        self._params = load_params(BouncingBall.SIMULATOR_NAME)
+        #self._params = load_params(BouncingBall.SIMULATOR_NAME)
         self._height = self._params['initial_height']
         self._vel_y = self._params['initial_vel_y']
         self._height_history = []
@@ -43,4 +42,5 @@ class BouncingBall(BaseSimulator):
         return states
 
     def _force(self):
-        return self._params['ball_mass'] * BouncingBall.GRAVITY_ACCEL
+        return self._params['ball_mass'] * BouncingBall.GRAVITY_ACCEL \
+                - self._params['resistance_coef'] * self._vel_y
