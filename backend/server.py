@@ -136,6 +136,17 @@ def get_states():
     return res
 
 
+@app.route('/get_states_definition')
+def get_states_definition():
+    simulator_name = request.args.get('simulator')
+    stetes_definition = conf['SIMULATORS'][simulator_name]['STATES_DEFINITION']
+    res = jsonify({
+        'states_definition': dict(stetes_definition)
+    })
+    res.status_code = 200
+    return res
+
+
 @app.route('/get_states_streaming')
 def get_states_streaming():
     simulator_name = request.args.get('simulator')

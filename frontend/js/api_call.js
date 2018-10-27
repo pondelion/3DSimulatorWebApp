@@ -41,6 +41,11 @@ function getStates(ip, port, callback, simulator, n=1) {
     getRequest(endpoint, callback);
 }
 
+function getStatesDefinition(ip, port, callback, simulator) {
+    var endpoint = "http://" + ip + ":" + port + "/get_states_definition?simulator=" + simulator;
+    getRequest(endpoint, callback);
+}
+
 function initSimulation(ip, port, callback, simulator) {
     var endpoint = "http://" + ip + ":" + port + "/init_simulation?simulator=" + simulator;
     getRequest(endpoint, callback);

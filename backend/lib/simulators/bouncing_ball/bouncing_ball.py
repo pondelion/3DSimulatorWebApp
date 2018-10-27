@@ -35,6 +35,8 @@ class BouncingBall(BaseSimulator):
         """最新状態(位置など)をn個返す
         """
         states = {
+            'obj_name': 'ball1',
+            'property_name': 'pos_y',
             'height': self._height_history[-n:],
             'vel_y': self._vel_y_history[-n:],
             'time': self._time_history[-n:]

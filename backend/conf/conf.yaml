@@ -12,7 +12,7 @@ SIMULATORS:
       initial_vel_y:
         param_type: textbox
         max: 100
-        min: 10
+        min: -100
         default: 20
         step: 0.1
       resistance_coef: 
@@ -42,31 +42,46 @@ SIMULATORS:
         min: -10
         default: 0
         step: 0.1
+        object_name: ground
+        object_property: pos_y
       ball_radius:
         param_type: textbox
         max: 5
         min: 1
         default: 3
         step: 0.1
+        object_name: ball1
+        object_property: radius
       ball_mass:
         param_type: textbox
         max: 20
         min: 1
         default: 3
         step: 0.1
-    STATE_NAMES:
-      [
-        height,
-        vel_z,
-        time
-      ]
+    STATES_DEFINITION:
+      height:
+        property: pos_y
+        object_name: ball1
+      vel_y:
+        property: vel_y
+        object_name: ball1
+      time:
+        property: time
     OBJECTS:
-      ball:
+      ball1:
         object_type: sphere
         initial_pos_x: 0
         initial_pos_y: 20
         initial_pos_z: 0
-        radius: 3
+        initial_radius: 3
+      ground:
+        object_type: plane
+        initial_pos_x: 0
+        initial_pos_y: 0
+        initial_pos_z: 0
+        initial_rotation_x : -1.57
+        initial_rotation_y : 0
+        initial_rotation_z : 0
 
   flow_particles:
 
@@ -76,3 +91,7 @@ PARAMETER_INPUT_TYPE:
   textbox
   button
   checkbox
+
+OBJECT_TYPE:
+  sphere
+  plane
