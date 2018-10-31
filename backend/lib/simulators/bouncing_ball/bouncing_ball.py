@@ -4,13 +4,11 @@ from ...solver.solver import euler
 
 class BouncingBall(BaseSimulator):
     GRAVITY_ACCEL = -9.8
-    SIMULATOR_NAME = 'bouncing_ball'
 
     def __init__(self, simulator_name):
         super().__init__(simulator_name)
 
     def init(self):
-        #self._params = load_params(BouncingBall.SIMULATOR_NAME)
         self._height = self._params['initial_height']
         self._vel_y = self._params['initial_vel_y']
         self._height_history = []
@@ -35,8 +33,6 @@ class BouncingBall(BaseSimulator):
         """最新状態(位置など)をn個返す
         """
         states = {
-            'obj_name': 'ball1',
-            'property_name': 'pos_y',
             'height': self._height_history[-n:],
             'vel_y': self._vel_y_history[-n:],
             'time': self._time_history[-n:]

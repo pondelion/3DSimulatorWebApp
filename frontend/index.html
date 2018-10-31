@@ -11,7 +11,9 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.8/c3.min.js'></script>
     <script  src="js/api_call.js"></script>
     <script  src="js/scene.js"></script>
+    <script  src="js/graph.js"></script>
     <script  src="js/utils/threejs_util.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/css.css">
 </head>
 
 <body>
@@ -19,8 +21,17 @@
     <div id="chart"></div>
 
     <script type="text/javascript">
-
-    window.onload = init
+        var chart = c3.generate({
+            bindto: '#chart',
+            data: {
+                columns: [
+                    ['data1', 30, 200, 100, 400, 150, 250],
+                    ['data2', 130, 100, 140, 200, 150, 50]
+                ],
+                type: 'bar'
+            }
+        });
+        window.onload = init
     </script>
 </body>
 

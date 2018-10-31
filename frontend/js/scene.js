@@ -19,7 +19,7 @@ function init() {
     renderer.shadowMap.enabled = true;
 
     camera.position.x = -30;
-    camera.position.y = 5;
+    camera.position.y = 40;
     camera.position.z = 40;
     camera.lookAt(scene.position);
 
@@ -131,14 +131,22 @@ function init() {
             console.log(this.responseText);
             var objects = JSON.parse(this.responseText).objects;
             for (var object in objects) {
+                if (objects[object].num) {
+                    var n = objects[object].num;
+                    for (var i = 0; i < n; ++i) {
+                        objs[object + i] = {};
+                    }
+                } else {
+                    objs[object] = {}
+                }
                 console.log(objects[object].object_type);
-                objs[object] = {}
                 pos_x = objects[object].initial_pos_x;
                 pos_y = objects[object].initial_pos_y;
                 pos_z = objects[object].initial_pos_z;
                 objs[object]['pos_x'] = pos_x;
                 objs[object]['pos_y'] = pos_y;
                 objs[object]['pos_z'] = pos_z;
+
                 if (objects[object].object_type == "sphere") {
                     objs[object]["object_type"] = "sphere";
                     radius = objects[object].initial_radius;
@@ -151,6 +159,11 @@ function init() {
                     objs[object]['rotation_z'] = objects[object].initial_rotation_z;
                     objs[object]['size_h'] = objects[object].initial_size_h;
                     objs[object]['size_w'] = objects[object].initial_size_w;
+                } else if (objects[object].object_type == "arrow") {
+                    objs[object]["object_type"] = "arrow";
+                    objs[object]['rotation_x'] = objects[object].initial_rotation_x;
+                    objs[object]['rotation_y'] = objects[object].initial_rotation_y;
+                    objs[object]['rotation_z'] = objects[object].initial_rotation_z;
                 }
             }
             initObjects(scene, objs);
@@ -228,6 +241,12 @@ function init() {
                 objects[objName]['object'] = obj;
                 console.log(objects);
                 scene.add(obj);
+            } else if (object["object_type"] == "arrow") {
+                obj = createArrow(name="arrow"+i, pos_x=object["pos_x"], pos_y=object["pos_y"], pos_z=object["pos_z"], 
+                                rotation_x=object["rotation_x"], rotation_y=object["rotation_y"], rotation_z=object["rotation_z"]);
+                objects[objName]['object'] = obj;
+                console.log(objects);
+                scene.add(obj);
             }
         }
     }
@@ -240,6 +259,7 @@ function init() {
                 //console.log("def : " + JSON.stringify(def));
                 val = states[stateName];
                 if ("object_name" in def) {
+                    console.log("objs : " + JSON.stringify(objs));
                     object = objs[def["object_name"]].object;
                     if ("property" in def) {
                         setObjectProperty(object, def["property"], val)
@@ -252,11 +272,11 @@ function init() {
     function setObjectProperty(object, property_type, val) {
         if (property_type == "pos_x") {
             object.position.x = val;
-        } else if ((property_type == "pos_y")) {
+        } else if (property_type == "pos_y") {
             object.position.y = val;
-        } else if ((property_type == "pos_z")) {
+        } else if (property_type == "pos_z") {
             object.position.z = val;
-        } else if ((property_type == "radius")) {
+        } else if (property_type == "radius") {
             object.scale.x = 0.33*val;
             object.scale.y = 0.33*val;
             object.scale.z = 0.33*val;

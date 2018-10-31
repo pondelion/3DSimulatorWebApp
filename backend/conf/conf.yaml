@@ -85,7 +85,71 @@ SIMULATORS:
 
   flow_particles:
 
-  ising_spin:
+  ising_spin2d:
+    MODULE_NAME: lib.simulators.ising_spin.ising_spin
+    CLASS_NAME: IsingSpin2D
+    PARAM_NAMES:
+      initial_temperature:
+        param_type: textbox
+        max: 1000
+        min: 1
+        default: 300
+        step: 1
+      final_temperature:
+        param_type: textbox
+        max: 1000
+        min: 1
+        default: 300
+        step: 1
+      sweep_rate_sec:
+        param_type: textbox
+        max: 50
+        min: 0.1
+        default: 1
+        step: 0.1
+      dimension_x:
+        param_type: textbox
+        max: 100
+        min: 2
+        default: 20
+        step: 1
+      dimension_y:
+        param_type: textbox
+        max: 100
+        min: 2
+        default: 20
+        step: 1
+      exchange_interaction:
+        param_type: textbox
+        max: 10
+        min: 0
+        default: 1
+        step: 0.1
+    STATES_DEFINITION:
+      directions:
+        property: rotation_x
+        object_name: spin
+        list: True
+      positions:
+        property: position
+        object_name: spon
+        list: True
+      time:
+        property: time
+      temperature:
+        property: temperature
+      magnetization:
+        property: phyisical_quantity
+    OBJECTS:
+      spin:
+        object_type: arrow
+        initial_pos_x: 0
+        initial_pos_y: 0
+        initial_pos_z: 0
+        initial_rotation_x : -3.14
+        initial_rotation_y : 0
+        initial_rotation_z : 0
+        num: 400
 
 PARAMETER_INPUT_TYPE:
   textbox
