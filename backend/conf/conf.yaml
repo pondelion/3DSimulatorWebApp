@@ -4,25 +4,25 @@ SIMULATORS:
     CLASS_NAME: BouncingBall
     PARAM_NAMES: 
       initial_height:
-        param_type: textbox
+        param_type: slider_textbox
         max: 50
         min: 1
         default: 10
         step: 0.1
       initial_vel_y:
-        param_type: textbox
+        param_type: slider_textbox
         max: 100
         min: -100
         default: 20
         step: 0.1
       resistance_coef: 
-        param_type: textbox
+        param_type: slider_textbox
         max: 10
         min: 0
         default: 1
         step: 0.1
       max_time:
-        param_type: textbox
+        param_type: slider_textbox
         max: 1000
         min: 10
         default: 30
@@ -31,13 +31,13 @@ SIMULATORS:
         param_type: checkbox
         default: true
       restitution_coef:
-        param_type: textbox
+        param_type: slider_textbox
         max: 1
         min: 0
         default: 0.8
         step: 0.1
       ground_height:
-        param_type: textbox
+        param_type: slider_textbox
         max: 10
         min: -10
         default: 0
@@ -45,7 +45,7 @@ SIMULATORS:
         object_name: ground
         object_property: pos_y
       ball_radius:
-        param_type: textbox
+        param_type: slider_textbox
         max: 5
         min: 1
         default: 3
@@ -53,7 +53,7 @@ SIMULATORS:
         object_name: ball1
         object_property: radius
       ball_mass:
-        param_type: textbox
+        param_type: slider_textbox
         max: 20
         min: 1
         default: 3
@@ -84,43 +84,86 @@ SIMULATORS:
         initial_rotation_z : 0
 
   flow_particles:
+    MODULE_NAME: lib.simulators.flow_particles.flow_particles
+    CLASS_NAME: FlowParticles
+    PARAM_NAMES: 
+      flow_field:
+        param_type: textbox
+        default: -0.5*z*0.1*(y+15), 0, 0.5*x*0.1*(y+15)
+      mass:
+        param_type: slider_textbox
+        max: 20
+        min: 1
+        default: 3
+        step: 0.1
+      particle_num:
+        param_type: slider_textbox
+        max: 1000
+        min: 5
+        default: 500
+        step: 1
+        object_name: particle
+        object_property: num
+    STATES_DEFINITION:
+      positions:
+        property: position
+        object_name: particle
+        list: True
+      time:
+        property: time
+    OBJECTS:
+      particle:
+        object_type: sprite
+        num: 500
+        initial_pos_x: 0
+        initial_pos_y: 0
+        initial_pos_z: 0
+      box:
+        object_type: box
+        initial_pos_x: 0
+        initial_pos_y: 0
+        initial_pos_z: 0
+        initial_size_x: 30
+        initial_size_y: 30
+        initial_size_z: 30
+        opacity: 0.05
 
   ising_spin2d:
     MODULE_NAME: lib.simulators.ising_spin.ising_spin
     CLASS_NAME: IsingSpin2D
     PARAM_NAMES:
       initial_temperature:
-        param_type: textbox
+        param_type: slider_textbox
         max: 1000
         min: 1
         default: 400
         step: 1
       final_temperature:
-        param_type: textbox
+        param_type: slider_textbox
         max: 1000
         min: 1
         default: 10
         step: 1
       sweep_rate_sec:
-        param_type: textbox
+        param_type: slider_textbox
         max: 50
         min: 0.1
         default: 20
         step: 0.1
       dimension_x:
-        param_type: textbox
+        param_type: slider_textbox
         max: 100
         min: 2
         default: 20
         step: 1
       dimension_y:
-        param_type: textbox
+        param_type: slider_textbox
         max: 100
         min: 2
         default: 20
         step: 1
       exchange_interaction:
-        param_type: textbox
+        param_type: slider_textbox
         max: 1000
         min: 0
         default: 100
@@ -154,12 +197,3 @@ SIMULATORS:
         initial_rotation_y : 0
         initial_rotation_z : 0
         num: 400
-
-PARAMETER_INPUT_TYPE:
-  textbox
-  button
-  checkbox
-
-OBJECT_TYPE:
-  sphere
-  plane

@@ -6,6 +6,7 @@ from ..utils.util import load_params
 class BaseSimulator:
 
     def __init__(self, simulator_name):
+        self._MAX_HISTORY = 10000
         self._time = 0.
         self._simulator_name = simulator_name
         self._is_running = False

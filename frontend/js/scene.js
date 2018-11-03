@@ -19,7 +19,7 @@ function init() {
     renderer.shadowMap.enabled = true;
 
     camera.position.x = -30;
-    camera.position.y = 40;
+    camera.position.y = 20;
     camera.position.z = 40;
     camera.lookAt(scene.position);
 
@@ -59,7 +59,7 @@ function init() {
             console.log(this.responseText);
             paramNames = JSON.parse(this.responseText).param_names;
             for (var paramName in paramNames) {
-                if (paramNames[paramName].param_type == "textbox") {
+                if (paramNames[paramName].param_type == "slider_textbox") {
                     controls[paramName] = paramNames[paramName].default;
                     gui.add(controls, paramName)
                         .min(paramNames[paramName].min)
@@ -80,6 +80,12 @@ function init() {
                                     );
                                 }
                             }
+                        });
+                } else if (paramNames[paramName].param_type == "textbox") {
+                    controls[paramName] = paramNames[paramName].default;
+                    gui.add(controls, paramName)
+                        .onChange(function(newValue) {
+                        
                         });
                 } else if (paramNames[paramName].param_type == "button") {
                     controls[paramName] = function() {};
@@ -157,6 +163,12 @@ function init() {
                     objs[objName]['pos_y'] = pos_y;
                     objs[objName]['pos_z'] = pos_z;
 
+                    if (objects[object].opacity) {
+                        objs[objName]['opacity'] = objects[object].opacity;
+                    } else {
+                        objs[objName]['opacity'] = 1.0;
+                    }
+
                     if (objects[object].object_type == "sphere") {
                         objs[objName]["object_type"] = "sphere";
                         radius = objects[object].initial_radius;
@@ -173,7 +185,14 @@ function init() {
                         objs[objName]['rotation_x'] = objects[object].initial_rotation_x;
                         objs[objName]['rotation_y'] = objects[object].initial_rotation_y;
                         objs[objName]['rotation_z'] = objects[object].initial_rotation_z;
-                    }
+                    } else if (objects[object].object_type == "sprite") {
+                        objs[objName]["object_type"] = "sprite";
+                    } else if (objects[object].object_type == "box") {
+                        objs[objName]["object_type"] = "box";
+                        objs[objName]['size_x'] = objects[object].initial_size_x;
+                        objs[objName]['size_y'] = objects[object].initial_size_y;
+                        objs[objName]['size_z'] = objects[object].initial_size_z;
+                    } 
                 }
             }
             initObjects(scene, objs);
@@ -250,8 +269,19 @@ function init() {
                                 rotation_x=object["rotation_x"], rotation_y=object["rotation_y"], rotation_z=object["rotation_z"]);
                 objects[objName]['object'] = obj;
                 scene.add(obj);
+            } else if (object["object_type"] == "sprite") {
+                obj = createSprite(pos_x=object["pos_x"], pos_y=object["pos_y"], pos_z=object["pos_z"]);
+                objects[objName]['object'] = obj;
+                scene.add(obj);
+            } else if (object["object_type"] == "box") {
+                obj = createBox(pos_x=object["pos_x"], pos_y=object["pos_y"], pos_z=object["pos_z"],
+                                size_x=object["size_x"], size_y=object["size_y"], size_z=object["size_z"], 
+                                opacity=object["opacity"]);
+                objects[objName]['object'] = obj;
+                scene.add(obj);
             }
         }
+        console.log(objs);
     }
 
     function updateStates(states, statesDefinition) {

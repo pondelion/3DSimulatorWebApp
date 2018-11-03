@@ -13,6 +13,15 @@ function createSphere(pos_x, pos_y, pos_z, radius, color=0x22DD22) {
     return sphere;
 }
 
+function createBox(pos_x=0, pos_y=0, pos_z=0, size_x=5, size_y=5, size_z=5, opacity=1.0, color=0xff0000) {
+    box = new THREE.Mesh(
+        new THREE.BoxGeometry(size_x, size_y, size_z),
+        new THREE.MeshLambertMaterial({color: color, opacity: opacity, transparent: true, side: THREE.DoubleSide, depthWrite: false})
+    );
+    box.position.set(pos_x, pos_y, pos_z);
+    return box;
+}
+
 function createPlane(pos_x=0, pos_y=0, pos_z=0, rotation_x=-0.5*Math.PI, 
                         rotation_y=0, rotation_z=0, color=0xff0000, size_h=50, size_w=50) {
     var planeGeometry = new THREE.PlaneGeometry(size_w, size_h, 1, 1);
@@ -42,4 +51,16 @@ function createArrow(name, dir_x=0, dir_y=1, dir_z=0, pos_x=0, pos_y=0, pos_z=0,
     arrowHelper.rotation.z = rotation_z;
     
     return arrowHelper;
+}
+
+function createSprite(pos_x=0, pos_y=0, pos_z=0, scale=0.2) {
+    // var material = new THREE.SpriteMaterial({
+    //     map: new THREE.TextureLoader().load("img/sprite.png")
+    // });
+    var material = new THREE.SpriteMaterial({color: 0x0000ee});
+    var sprite = new THREE.Sprite(material);
+    sprite.scale.x = scale;
+    sprite.scale.y = scale;
+    sprite.scale.z = scale;
+    return sprite;
 }
