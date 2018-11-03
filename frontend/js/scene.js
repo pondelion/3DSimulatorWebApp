@@ -66,13 +66,11 @@ function init() {
                         .max(paramNames[paramName].max)
                         .step(paramNames[paramName].step)
                         .onChange(function(newValue) {
-                            //console.log(this);
                             var params = {}
                             for (var paramName in paramNames) {
                                 params[this.property] = controls[this.property];
                             }
                             setParams(ip, port, function () {}, controls.simulators, params, 'numeric');
-                            //console.log("paramObjs : " + JSON.stringify(paramObjs));
                             if (paramObjs[this.property]) {
                                 if (objs[paramObjs[this.property].object_name]) {
                                     setObjectProperty(
@@ -137,33 +135,45 @@ function init() {
                         objs[object + i] = {};
                     }
                 } else {
+                    var n = 1;
                     objs[object] = {}
                 }
                 console.log(objects[object].object_type);
-                pos_x = objects[object].initial_pos_x;
-                pos_y = objects[object].initial_pos_y;
-                pos_z = objects[object].initial_pos_z;
-                objs[object]['pos_x'] = pos_x;
-                objs[object]['pos_y'] = pos_y;
-                objs[object]['pos_z'] = pos_z;
 
-                if (objects[object].object_type == "sphere") {
-                    objs[object]["object_type"] = "sphere";
-                    radius = objects[object].initial_radius;
-                    //sphere = addSphere(scene, pos_x, pos_y, pos_z, radius);
-                    objs[object]['radius'] = radius;
-                } else if (objects[object].object_type == "plane") {
-                    objs[object]["object_type"] = "plane";
-                    objs[object]['rotation_x'] = objects[object].initial_rotation_x;
-                    objs[object]['rotation_y'] = objects[object].initial_rotation_y;
-                    objs[object]['rotation_z'] = objects[object].initial_rotation_z;
-                    objs[object]['size_h'] = objects[object].initial_size_h;
-                    objs[object]['size_w'] = objects[object].initial_size_w;
-                } else if (objects[object].object_type == "arrow") {
-                    objs[object]["object_type"] = "arrow";
-                    objs[object]['rotation_x'] = objects[object].initial_rotation_x;
-                    objs[object]['rotation_y'] = objects[object].initial_rotation_y;
-                    objs[object]['rotation_z'] = objects[object].initial_rotation_z;
+                for (var i = 0; i < n; ++i) {
+
+                    if (n == 1) {
+                        var nameSuffix = "";
+                    } else {
+                        var nameSuffix = i;
+                    }
+
+                    var objName = object + nameSuffix;
+
+                    pos_x = objects[object].initial_pos_x;
+                    pos_y = objects[object].initial_pos_y;
+                    pos_z = objects[object].initial_pos_z;
+                    objs[objName]['pos_x'] = pos_x;
+                    objs[objName]['pos_y'] = pos_y;
+                    objs[objName]['pos_z'] = pos_z;
+
+                    if (objects[object].object_type == "sphere") {
+                        objs[objName]["object_type"] = "sphere";
+                        radius = objects[object].initial_radius;
+                        objs[objName]['radius'] = radius;
+                    } else if (objects[object].object_type == "plane") {
+                        objs[objName]["object_type"] = "plane";
+                        objs[objName]['rotation_x'] = objects[object].initial_rotation_x;
+                        objs[objName]['rotation_y'] = objects[object].initial_rotation_y;
+                        objs[objName]['rotation_z'] = objects[object].initial_rotation_z;
+                        objs[objName]['size_h'] = objects[object].initial_size_h;
+                        objs[objName]['size_w'] = objects[object].initial_size_w;
+                    } else if (objects[object].object_type == "arrow") {
+                        objs[objName]["object_type"] = "arrow";
+                        objs[objName]['rotation_x'] = objects[object].initial_rotation_x;
+                        objs[objName]['rotation_y'] = objects[object].initial_rotation_y;
+                        objs[objName]['rotation_z'] = objects[object].initial_rotation_z;
+                    }
                 }
             }
             initObjects(scene, objs);
@@ -209,12 +219,9 @@ function init() {
             if (count % 3 == 0) {
                 getStatesCallback = function() {
                     if (this.readyState == 4) {
-                        //console.log(this.responseText);
                         var states = JSON.parse(this.responseText).states;
                         
                         updateStates(states, statesDefinition)
-                        //sphere.position.y = states.height;
-                        //console.log(objs);
                     }
                 }
                 getStates(ip, port, getStatesCallback, controls.simulators);
@@ -228,24 +235,20 @@ function init() {
     function initObjects(scene, objects) {
         for (objName in objects) {
             object = objects[objName];
-            console.log(object);
             if (object["object_type"] == "sphere") {
                 obj = createSphere(object["pos_x"], object["pos_y"], object["pos_z"], object["radius"]);
                 objects[objName]['object'] = obj;
-                console.log(objects);
                 scene.add(obj);
             } else if (object["object_type"] == "plane") {
                 obj = createPlane(pos_x=object["pos_x"], pos_y=object["pos_y"], pos_z=object["pos_z"], 
                                         rotation_x=object["rotation_x"], rotation_y=object["rotation_y"], 
                                         rotation_z=object["rotation_z"]);
                 objects[objName]['object'] = obj;
-                console.log(objects);
                 scene.add(obj);
             } else if (object["object_type"] == "arrow") {
-                obj = createArrow(name="arrow"+i, pos_x=object["pos_x"], pos_y=object["pos_y"], pos_z=object["pos_z"], 
+                obj = createArrow(name=objName, pos_x=object["pos_x"], pos_y=object["pos_y"], pos_z=object["pos_z"], 
                                 rotation_x=object["rotation_x"], rotation_y=object["rotation_y"], rotation_z=object["rotation_z"]);
                 objects[objName]['object'] = obj;
-                console.log(objects);
                 scene.add(obj);
             }
         }
@@ -253,16 +256,20 @@ function init() {
 
     function updateStates(states, statesDefinition) {
         for (stateName in states) {
-            //console.log("stateName : " + stateName);
             if (stateName in statesDefinition) {
                 def = statesDefinition[stateName];
-                //console.log("def : " + JSON.stringify(def));
                 val = states[stateName];
                 if ("object_name" in def) {
-                    console.log("objs : " + JSON.stringify(objs));
-                    object = objs[def["object_name"]].object;
                     if ("property" in def) {
-                        setObjectProperty(object, def["property"], val)
+                        if (def.list) {
+                            for (var i = 0; i < val[0].length; ++i) {
+                                object = objs[def["object_name"] + i].object;
+                                setObjectProperty(object, def["property"], val[0][i]);
+                            }
+                        } else {
+                            object = objs[def["object_name"]].object;
+                            setObjectProperty(object, def["property"], val);
+                        }
                     }
                 }
             } 
@@ -270,16 +277,38 @@ function init() {
     }
 
     function setObjectProperty(object, property_type, val) {
-        if (property_type == "pos_x") {
-            object.position.x = val;
-        } else if (property_type == "pos_y") {
-            object.position.y = val;
-        } else if (property_type == "pos_z") {
-            object.position.z = val;
-        } else if (property_type == "radius") {
-            object.scale.x = 0.33*val;
-            object.scale.y = 0.33*val;
-            object.scale.z = 0.33*val;
-        }
+        switch(property_type) {
+            case "pos_x":
+                object.position.x = val;
+                break;
+            case "pos_y":
+                object.position.y = val;
+                break;
+            case "pos_z":
+                object.position.z = val;
+                break;
+            case "radius":
+                object.scale.x = 0.33*val;
+                object.scale.y = 0.33*val;
+                object.scale.z = 0.33*val;
+                break;
+            case "position":
+                object.position.x = val[0];
+                object.position.y = val[1];
+                object.position.z = val[2];
+                break;
+            case "rotation_x":
+                object.rotation.x = val;
+                break;
+            case "rotation_y":
+                object.rotation.y = val;
+                break;
+            case "rotation_z":
+                object.rotation.z = val;
+                break;
+            case "color":
+                object.setColor(new THREE.Color(val));
+                break;
+        } 
     }
 }

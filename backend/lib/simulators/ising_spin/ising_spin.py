@@ -20,7 +20,10 @@ class IsingSpin2D(BaseSimulator):
         self._time_history = []
         self._magnetization_history = []
         self._spins_history = []
-        self._init_positions()
+        self._spins_history.append(self._spins.flatten().copy().tolist())
+        self._colors_history = []
+        self._colors_history.append([0xff0000 if dir == 1 else 0x0000ff for dir in self._spins.flatten()])
+        self._init_positions(dx=3, dy=3)
 
     def update(self, dt):
         if self._is_running is False:
@@ -30,6 +33,7 @@ class IsingSpin2D(BaseSimulator):
         sweep_rate = sweep_dir * abs(float(self._params['sweep_rate_sec']))
         self._temperature += sweep_rate * dt
         start_time = datetime.datetime.now()
+        #print('update : ', dt)
         while (datetime.datetime.now() - start_time).total_seconds() < dt:
             idx = np.random.randint(0, self._dimension_x)
             idy = np.random.randint(0, self._dimension_y)
@@ -42,21 +46,27 @@ class IsingSpin2D(BaseSimulator):
                     pass
             cur_energy *= (-j * self._spins[idx, idy])
             flip_energy = -cur_energy
-            if np.random.rand() < 0.5:
+            if np.random.rand() < 0.000001:
                 self._spins[idx, idy] *= -1
-        self._spins_history.append(self._spins.copy().tolist())
+            elif np.random.rand() < min(np.exp(-(flip_energy-cur_energy)/self._temperature), 1.):
+                self._spins[idx, idy] *= -1
+        #print('update')
+        self._spins_history.append(((self._spins + 1) * np.pi * 0.5).flatten().copy().tolist())
         self._spins_history = self._spins_history[-self._MAX_HISTORY:]
         self._magnetization_history.append(self._get_normalized_magnetizastion())
         self._magnetization_history = self._magnetization_history[-self._MAX_HISTORY:]
         self._time_history.append(self._time)
         self._time_history = self._time_history[-self._MAX_HISTORY:]
+        self._colors_history.append([0xff0000 if dir == 1 else 0x0000ff for dir in self._spins.flatten()])
+        self._colors_history = self._colors_history[-self._MAX_HISTORY:]
 
     def get_states(self, n=1):
         """最新状態(位置など)をn個返す
         """
         states = {
             'directions': self._spins_history[-n:],
-            'positions': self._positions[-n:],
+            'positions': self._positions_history[-n:],
+            'colors': self._colors_history[-n:],
             'magnetization': self._magnetization_history[-n:],
             'time': self._time_history[-n:]
         }
@@ -72,4 +82,5 @@ class IsingSpin2D(BaseSimulator):
         for x in range(dim_x):
             for y in range(dim_y):
                 self._positions[x, y] = np.array([x*dx - 0.5*dx*dim_x, 0, y*dy - 0.5*dy*dim_y])
-        self._positions = self._positions.tolist()
+        #self._positions = self._positions.reshape([-1, 3]).tolist()
+        self._positions_history = [self._positions.reshape([-1, 3]).copy().tolist()]

@@ -11,12 +11,12 @@ def update_worker(simulator):
     dt_sec = 0.
     while True:
         time = datetime.datetime.now()
-        dt_sec += (time - prev_time).total_seconds()
+        dt_sec += min((time - prev_time).total_seconds(), 0.1)
         if dt_sec > simulator.minimal_dt:
             if simulator.is_running:
                 simulator.update(dt_sec)
-            dt_sec -= simulator.minimal_dt
-        prev_time = time
+            dt_sec = 0
+            prev_time = datetime.datetime.now()
         sleep(0.001)
 
 

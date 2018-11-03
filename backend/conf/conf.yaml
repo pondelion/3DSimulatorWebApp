@@ -93,19 +93,19 @@ SIMULATORS:
         param_type: textbox
         max: 1000
         min: 1
-        default: 300
+        default: 400
         step: 1
       final_temperature:
         param_type: textbox
         max: 1000
         min: 1
-        default: 300
+        default: 10
         step: 1
       sweep_rate_sec:
         param_type: textbox
         max: 50
         min: 0.1
-        default: 1
+        default: 20
         step: 0.1
       dimension_x:
         param_type: textbox
@@ -121,9 +121,9 @@ SIMULATORS:
         step: 1
       exchange_interaction:
         param_type: textbox
-        max: 10
+        max: 1000
         min: 0
-        default: 1
+        default: 100
         step: 0.1
     STATES_DEFINITION:
       directions:
@@ -132,7 +132,11 @@ SIMULATORS:
         list: True
       positions:
         property: position
-        object_name: spon
+        object_name: spin
+        list: True
+      colors:
+        property: color
+        object_name: spin
         list: True
       time:
         property: time
@@ -146,7 +150,7 @@ SIMULATORS:
         initial_pos_x: 0
         initial_pos_y: 0
         initial_pos_z: 0
-        initial_rotation_x : -3.14
+        initial_rotation_x : 0
         initial_rotation_y : 0
         initial_rotation_z : 0
         num: 400
