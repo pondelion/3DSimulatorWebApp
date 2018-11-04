@@ -36,6 +36,7 @@ class FlowParticles(BaseSimulator):
                 self._positions[i][1] = -self._RANGE
             if self._positions[i][2] < -self._RANGE:
                 self._positions[i][2] = -self._RANGE
+        print('1cycle')
         self._positions_history.append(self._positions.reshape([-1, 3]).copy().tolist())
         self._positions_history = self._positions_history[-self._MAX_HISTORY:]
         self._time_history.append(self._time)
@@ -52,7 +53,7 @@ class FlowParticles(BaseSimulator):
 
     def _force(self, pos):
         #return np.array([-0.5*pos[2], 0.0, 0.5*pos[0]])*(pos[1]+self._RANGE)*0.1
-        return self._eval_flow_field(pos[0], pos[1], pos[2])
+        return self._eval_flow_field(pos[0], pos[1], pos[2])*0.1
 
     def _init_particles(self, scale=10):
         self._positions = np.random.rand(
@@ -63,30 +64,36 @@ class FlowParticles(BaseSimulator):
         self._positions_history.append(self._positions.reshape([-1, 3]).copy().tolist())
 
     def _parse_flow_field(self):
+        x = sympy.Symbol('x')
+        y = sympy.Symbol('y')
+        z = sympy.Symbol('z')
+        self._x = x
+        self._y = y 
+        self._z = z
         try:
-            self._flow_field_x = str(self._params['flow_field_x']) + ' + 0*x + 0*y + 0*z'
+            self._flow_field_x = eval(str(self._params['flow_field_x']) + " + 0*x + 0*y + 0*z")
+            print(type(self._flow_field_x))
+            print(self._flow_field_x)
+            print(self._flow_field_x.subs({x: 1., y: 1., z: 1.}))
         except Exception as e:
             print(e)
             pass
         try:
-            self._flow_field_y = str(self._params['flow_field_y']) + ' + 0*x + 0*y + 0*z'
+            self._flow_field_y = eval(str(self._params['flow_field_y']) + " + 0*x + 0*y + 0*z")
         except Exception as e:
             print(e)
             pass
         try:
-            self._flow_field_z = str(self._params['flow_field_x']) + ' + 0*x + 0*y + 0*z'
+            self._flow_field_z = eval(str(self._params['flow_field_x']) + " + 0*x + 0*y + 0*z")
         except Exception as e:
             print(e)
             pass
 
     def _eval_flow_field(self, val_x, val_y, val_z):
-        x = val_x
-        y = val_y
-        z = val_z
         flow_filed = np.array([
-            float(eval(self._flow_field_x)),
-            float(eval(self._flow_field_y)),
-            float(eval(self._flow_field_z)),
+            float(self._flow_field_x.subs({self._x: val_x, self._y: val_x, self._z: val_z})),
+            float(self._flow_field_y.subs({self._x: val_x, self._y: val_x, self._z: val_z})),
+            float(self._flow_field_z.subs({self._x: val_x, self._y: val_x, self._z: val_z})),
         ])
         return flow_filed
 

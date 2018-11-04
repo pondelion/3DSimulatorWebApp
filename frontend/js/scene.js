@@ -6,7 +6,12 @@ function init() {
     var objs = {};  // {オブジェクト名: オブジェクトインスタンス}の辞書
     var paramObjs = {};  // {パラメータ名: {'object': オブジェクトインスタンス, 'param}}
     var statesDefinition = {};
+    var displayValues = {};
     var rotateCamera = false;
+
+    var ctx = document.getElementById("cv").getContext("2d");
+    ctx.font = "italic 20px Arial"; //フォントにArial,40px,斜体を指定
+    ctx.fillStyle = "green"; //塗り潰し色を緑に
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -203,6 +208,11 @@ function init() {
         if (this.readyState == 4) {
             console.log(this.responseText);
             statesDefinition = JSON.parse(this.responseText).states_definition;
+            for (stateName in statesDefinition) {
+                if (statesDefinition[stateName].display) {
+                    displayValues[stateName] = 0;
+                }
+            }
         }
     };
     
@@ -221,7 +231,7 @@ function init() {
     };
     getSimulators(ip, port, getSimulatorsCallback);
 
-    document.getElementById("3DScene").appendChild(renderer.domElement);
+    document.getElementById("scene").appendChild(renderer.domElement);
 
     render();
     var count = 0;
@@ -240,7 +250,8 @@ function init() {
                     if (this.readyState == 4) {
                         var states = JSON.parse(this.responseText).states;
                         
-                        updateStates(states, statesDefinition)
+                        updateStates(states, statesDefinition);
+                        updateDisplay(displayValues, ctx);
                     }
                 }
                 getStates(ip, port, getStatesCallback, controls.simulators);
@@ -302,7 +313,11 @@ function init() {
                         }
                     }
                 }
-            } 
+            }
+
+            if (stateName in displayValues) {
+                displayValues[stateName] = states[stateName];
+            }
         }
     }
 
@@ -340,5 +355,16 @@ function init() {
                 object.setColor(new THREE.Color(val));
                 break;
         } 
+    }
+
+    function updateDisplay(displayValues, ctx) {
+        var i = 0;
+        ctx.clearRect(0, 0, 500, 500);
+        ctx.beginPath();
+        for (name in displayValues) {
+            var txt = name + " : " + Math.round(displayValues[name]*100)/100;
+            ctx.fillText(txt, 10, 30*i+30, 200);
+            i += 1;
+        }
     }
 }

@@ -62,9 +62,11 @@ SIMULATORS:
       height:
         property: pos_y
         object_name: ball1
+        display: True
       vel_y:
         property: vel_y
         object_name: ball1
+        display: True
       time:
         property: time
     OBJECTS:
@@ -87,9 +89,15 @@ SIMULATORS:
     MODULE_NAME: lib.simulators.flow_particles.flow_particles
     CLASS_NAME: FlowParticles
     PARAM_NAMES: 
-      flow_field:
+      flow_field_x:
         param_type: textbox
-        default: -0.5*z*0.1*(y+15), 0, 0.5*x*0.1*(y+15)
+        default: -0.5*z*0.1*(y+15)
+      flow_field_y:
+        param_type: textbox
+        default: 0
+      flow_field_z:
+        param_type: textbox
+        default: 0.5*x*0.1*(y+15)
       mass:
         param_type: slider_textbox
         max: 20
@@ -185,8 +193,10 @@ SIMULATORS:
         property: time
       temperature:
         property: temperature
+        display: True
       magnetization:
         property: phyisical_quantity
+        display: True
     OBJECTS:
       spin:
         object_type: arrow
