@@ -207,3 +207,91 @@ SIMULATORS:
         initial_rotation_y : 0
         initial_rotation_z : 0
         num: 400
+
+  box_collision_2D:
+    MODULE_NAME: lib.simulators.molecular_dynamics.box_collision_2D
+    CLASS_NAME: BoxCollision2D
+    PARAM_NAMES: 
+      epsilon:
+        param_type: slider_textbox
+        max: 20
+        min: 0
+        default: 1
+        step: 0.1
+      sigma:
+        param_type: slider_textbox
+        max: 100
+        min: 0
+        default: 1
+        step: 0.1
+      box_dim_x:
+        param_type: slider_textbox
+        max: 100
+        min: 1
+        default: 40
+        step: 1
+      box_dim_y:
+        param_type: slider_textbox
+        max: 100
+        min: 1
+        default: 40
+        step: 1
+      mass1:
+        param_type: slider_textbox
+        max: 100
+        min: 1
+        default: 1
+        step: 0.1
+      domain_x_min:
+        param_type: slider_textbox
+        max: 0
+        min: -100
+        default: -80
+        step: 0.1
+      domain_x_max:
+        param_type: slider_textbox
+        max: 100
+        min: 0
+        default: 80
+        step: 0.1
+      domain_y_min:
+        param_type: slider_textbox
+        max: 0
+        min: -100
+        default: -10
+        step: 0.1
+      domain_y_max:
+        param_type: slider_textbox
+        max: 100
+        min: 0
+        default: 80
+        step: 0.1
+      cutoff_r:
+        param_type: slider_textbox
+        max: 100
+        min: 0
+        default: 2
+        step: 0.1
+    STATES_DEFINITION:
+      box_positions:
+        property: position
+        object_name: particle1
+        list: True
+      time:
+        property: time
+    OBJECTS:
+      particle1:
+        object_type: sprite
+        num: 1600
+        initial_pos_x: 0
+        initial_pos_y: 0
+        initial_pos_z: 0
+      box:
+        object_type: box
+        initial_pos_x: 0
+        initial_pos_y: 35
+        initial_pos_z: 0
+        initial_size_x: 160
+        initial_size_y: 90
+        initial_size_z: 2
+        opacity: 0.025

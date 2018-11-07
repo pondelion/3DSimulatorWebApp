@@ -10,8 +10,8 @@ function init() {
     var rotateCamera = false;
 
     var ctx = document.getElementById("cv").getContext("2d");
-    ctx.font = "italic 20px Arial"; //フォントにArial,40px,斜体を指定
-    ctx.fillStyle = "green"; //塗り潰し色を緑に
+    ctx.font = "italic 20px Arial";
+    ctx.fillStyle = "green";
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);

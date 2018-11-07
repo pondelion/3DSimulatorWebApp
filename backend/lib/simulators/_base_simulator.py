@@ -38,6 +38,7 @@ class BaseSimulator:
         """
         for key, val in params.items():
             self._params[key] = val
+        self._on_update_params()
 
     @property
     def is_running(self):
@@ -70,3 +71,6 @@ class BaseSimulator:
     def get_states_streaming(self):
         while True:
             yield json.dumps(self.get_states())
+
+    def _on_update_params(self):
+        pass
