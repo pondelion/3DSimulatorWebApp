@@ -279,6 +279,10 @@ SIMULATORS:
         list: True
       time:
         property: time
+        display: True
+      kinetic_energy:
+        property: physical_quantity
+        display: True
     OBJECTS:
       particle1:
         object_type: sprite

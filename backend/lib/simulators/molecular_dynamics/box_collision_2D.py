@@ -9,12 +9,17 @@ class BoxCollision2D(BaseSimulator):
         super().__init__(simulator_name)
 
     def init(self):
+        self._time = 0.
         self._n_paricles = 0
         self._time_history = []
         self._positions_history = []
+        self._kinetic_energy_history = []
         self._on_update_params()
         self._init_particles(scale=0.3)
         self._init_cell()
+        self._kinetic_energy_history.append(self._get_kinetic_energy())
+        self._positions_history.append(self._positions.reshape([-1, 3]).copy().tolist())
+        self._time_history.append(self._time)
 
     def update(self, dt):
         """Velocity-Stormer-Verlet法で粒子の位置更新
@@ -45,7 +50,7 @@ class BoxCollision2D(BaseSimulator):
 
         # update particle_ids_cell according to updated positions
         self._init_cell()
-        print(self._particle_ids_cell)
+        # print(self._particle_ids_cell)
 
         next_vel = np.zeros([self._n_paricles, 3])
         next_f = np.zeros([self._n_paricles, 3])
@@ -65,13 +70,16 @@ class BoxCollision2D(BaseSimulator):
         self._positions_history = self._positions_history[-self._MAX_HISTORY:]
         self._time_history.append(self._time)
         self._time_history = self._time_history[-self._MAX_HISTORY:]
+        self._kinetic_energy_history.append(self._get_kinetic_energy())
+        self._kinetic_energy_history = self._kinetic_energy_history[-self._MAX_HISTORY:]
 
     def get_states(self, n=1):
         """最新状態をn個返す
         """
         states = {
             'box_positions': self._positions_history[-n:],
-            'time': self._time_history[-n:]
+            'time': self._time_history[-n:],
+            'kinetic_energy': self._kinetic_energy_history[-n:]
         }
         return states
 
@@ -119,3 +127,10 @@ class BoxCollision2D(BaseSimulator):
         self._domain_y_max = float(self._params['domain_y_max'])
         self._cell_num_x = int(np.ceil((self._domain_x_max - self._domain_x_min) / self._cutoff_r))
         self._cell_num_y = int(np.ceil((self._domain_y_max - self._domain_y_min) / self._cutoff_r))
+        self._mass = np.array([self._params['mass1']]*self._n_paricles)
+
+    def _get_kinetic_energy(self):
+        energy = 0.0
+        for i in range(self._n_paricles):
+            energy += 0.5 * self._mass[i] * sum(self._velocities[i]*self._velocities[i])
+        return energy
