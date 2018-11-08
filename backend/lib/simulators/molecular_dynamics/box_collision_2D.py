@@ -34,9 +34,6 @@ class BoxCollision2D(BaseSimulator):
             # calc force_t on particle_i
             cell_id_x, cell_id_y = self._get_cell_id(self._positions[i][0], self._positions[i][1])
             particle_ids = self._get_around_particles(cell_id_x, cell_id_y)
-            if i == 0:
-                print('{} : {}'.format(cell_id_x, cell_id_y))
-                print('particle_ids of 0 : ', particle_ids)
             for particle_id in particle_ids:
                 if i == particle_id:
                     continue
@@ -102,8 +99,6 @@ class BoxCollision2D(BaseSimulator):
     def _get_around_particles(self, cell_id_x, cell_id_y):
         """隣接セル内の粒子のIDリストを取得する
         """
-        if cell_id_x == 37 and cell_id_y == 4:
-            print('--asdkaufhushf')
         particle_ids = []
         for dx, dy in ((-1, 0), (0, -1), (0, 0), (1, 0), (0, 1)):
             try:
@@ -139,8 +134,6 @@ class BoxCollision2D(BaseSimulator):
         self._domain_y_max = float(self._params['domain_y_max'])
         self._cell_num_x = int(np.ceil((self._domain_x_max - self._domain_x_min) / self._cutoff_r)) + 1
         self._cell_num_y = int(np.ceil((self._domain_y_max - self._domain_y_min) / self._cutoff_r)) + 1
-        print(self._cell_num_x)
-        print(self._cell_num_y)
         self._mass = np.array([self._params['mass1']]*self._n_paricles)
 
     def _get_kinetic_energy(self):
