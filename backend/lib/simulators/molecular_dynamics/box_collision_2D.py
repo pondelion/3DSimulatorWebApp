@@ -33,9 +33,13 @@ class BoxCollision2D(BaseSimulator):
         for i in range(self._n_paricles):
             # calc force_t on particle_i
             cell_id_x, cell_id_y = self._get_cell_id(self._positions[i][0], self._positions[i][1])
-            particle_ids = self._get_around_particles(cell_id_x, cell_id_x)
+            particle_ids = self._get_around_particles(cell_id_x, cell_id_y)
+            if i == 0:
+                print('{} : {}'.format(cell_id_x, cell_id_y))
+                print('particle_ids of 0 : ', particle_ids)
             for particle_id in particle_ids:
-                print('{} : {}'.format(i, particle_id))
+                if i == particle_id:
+                    continue
                 f[i] += lennard_jones(self._positions[i], self._positions[particle_id],
                                     float(self._params['epsilon']), float(self._params['sigma']))
             f[i] += gravity(self._mass[i])
@@ -57,8 +61,10 @@ class BoxCollision2D(BaseSimulator):
         for i in range(self._n_paricles):
             # calc force_t+1 on particle_i
             cell_id_x, cell_id_y = self._get_cell_id(self._positions[i][0], self._positions[i][1])
-            particle_ids = self._get_around_particles(cell_id_x, cell_id_x)
+            particle_ids = self._get_around_particles(cell_id_x, cell_id_y)
             for particle_id in particle_ids:
+                if i == particle_id:
+                    continue
                 next_f[i] += lennard_jones(self._positions[i], self._positions[particle_id],
                                     float(self._params['epsilon']), float(self._params['sigma']))
             next_f[i] += gravity(self._mass[i])
@@ -86,8 +92,7 @@ class BoxCollision2D(BaseSimulator):
     def _init_particles(self, scale=1.0, box_height=15):
         # box
         self._positions = np.array([[x, y, 0.0] for x in np.arange(int(self._params['box_dim_x'])) for y in np.arange(int(self._params['box_dim_y']))])
-        self._positions -= np.array([0.5*float(self._params['box_dim_x']), 0.0, 0.0])
-        self._positions -= np.array([0.0, 0.5*float(self._params['box_dim_y']), 0.0])
+        self._positions -= np.array([0.5*float(self._params['box_dim_x']), 0.5*float(self._params['box_dim_y']), 0.0])
         self._positions *= scale
         self._positions += np.array([0.0, box_height, 0.0])
         self._velocities = np.array([[0.0, 0.0, 0.0] for x in np.arange(int(self._params['box_dim_x'])) for y in np.arange(int(self._params['box_dim_y']))])
@@ -97,11 +102,15 @@ class BoxCollision2D(BaseSimulator):
     def _get_around_particles(self, cell_id_x, cell_id_y):
         """隣接セル内の粒子のIDリストを取得する
         """
+        if cell_id_x == 37 and cell_id_y == 4:
+            print('--asdkaufhushf')
         particle_ids = []
         for dx, dy in ((-1, 0), (0, -1), (0, 0), (1, 0), (0, 1)):
             try:
+                if cell_id_x == 37 and cell_id_y == 4:
+                    print('get_around : ', self._particle_ids_cell[cell_id_x+dx][cell_id_y+dy])
                 particle_ids += self._particle_ids_cell[cell_id_x+dx][cell_id_y+dy].copy()
-            except IndexError:
+            except IndexError as e:
                 pass
 
         return particle_ids
@@ -109,10 +118,13 @@ class BoxCollision2D(BaseSimulator):
     def _init_cell(self):
         """セルに所属する粒子IDリストを初期化
         """
-        self._particle_ids_cell = [[[] for x in range(self._cell_num_x)] for y in range(self._cell_num_y)]
+        self._particle_ids_cell = [[[] for y in range(self._cell_num_y)] for x in range(self._cell_num_x)]
         for particle_id in range(self._n_paricles):
             cell_id_x, cell_id_y = self._get_cell_id(self._positions[particle_id][0], self._positions[particle_id][1])
-            self._particle_ids_cell[cell_id_x][cell_id_y].append(particle_id)
+            try:
+                self._particle_ids_cell[cell_id_x][cell_id_y].append(particle_id)
+            except Exception:
+                print('{} : {}'.format(cell_id_x, cell_id_y))
 
     def _get_cell_id(self, x, y):
         cell_id_x = int((x - self._domain_x_min) / self._cutoff_r)
@@ -125,8 +137,10 @@ class BoxCollision2D(BaseSimulator):
         self._domain_x_max = float(self._params['domain_x_max'])
         self._domain_y_min = float(self._params['domain_y_min'])
         self._domain_y_max = float(self._params['domain_y_max'])
-        self._cell_num_x = int(np.ceil((self._domain_x_max - self._domain_x_min) / self._cutoff_r))
-        self._cell_num_y = int(np.ceil((self._domain_y_max - self._domain_y_min) / self._cutoff_r))
+        self._cell_num_x = int(np.ceil((self._domain_x_max - self._domain_x_min) / self._cutoff_r)) + 1
+        self._cell_num_y = int(np.ceil((self._domain_y_max - self._domain_y_min) / self._cutoff_r)) + 1
+        print(self._cell_num_x)
+        print(self._cell_num_y)
         self._mass = np.array([self._params['mass1']]*self._n_paricles)
 
     def _get_kinetic_energy(self):
