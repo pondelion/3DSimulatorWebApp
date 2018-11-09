@@ -354,6 +354,9 @@ function init() {
             case "color":
                 object.setColor(new THREE.Color(val));
                 break;
+            case "material_color":
+                object.material.color.set(val);
+                break;
         } 
     }
 

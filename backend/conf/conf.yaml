@@ -216,31 +216,49 @@ SIMULATORS:
         param_type: slider_textbox
         max: 20
         min: 0
-        default: 2.5
+        default: 20
         step: 0.1
       sigma:
         param_type: slider_textbox
         max: 100
         min: 0
-        default: 0.5
+        default: 0.1
         step: 0.1
       box_dim_x:
         param_type: slider_textbox
         max: 100
         min: 1
-        default: 40
+        default: 20
         step: 1
       box_dim_y:
         param_type: slider_textbox
         max: 100
         min: 1
-        default: 40
+        default: 20
+        step: 1
+      ground_dim_x:
+        param_type: slider_textbox
+        max: 100
+        min: 1
+        default: 80
+        step: 1
+      ground_dim_y:
+        param_type: slider_textbox
+        max: 100
+        min: 1
+        default: 10
         step: 1
       mass1:
         param_type: slider_textbox
         max: 100
         min: 1
         default: 1
+        step: 0.1
+      mass2:
+        param_type: slider_textbox
+        max: 100
+        min: 1
+        default: 80
         step: 0.1
       domain_x_min:
         param_type: slider_textbox
@@ -270,11 +288,15 @@ SIMULATORS:
         param_type: slider_textbox
         max: 100
         min: 0
-        default: 1.5
+        default: 1
         step: 0.1
     STATES_DEFINITION:
       box_positions:
         property: position
+        object_name: particle1
+        list: True
+      colors:
+        property: material_color
         object_name: particle1
         list: True
       time:
@@ -286,7 +308,7 @@ SIMULATORS:
     OBJECTS:
       particle1:
         object_type: sprite
-        num: 1600
+        num: 1200
         initial_pos_x: 0
         initial_pos_y: 0
         initial_pos_z: 0

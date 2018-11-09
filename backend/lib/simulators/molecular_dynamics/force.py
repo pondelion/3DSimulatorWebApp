@@ -10,5 +10,5 @@ def lennard_jones(p1: np.array, p2: np.array, eps, sigma):
     return coeff * r
 
 
-def gravity(m, g=9.8):
-    return -m * np.array([0.0, g, 0.0])
+def gravity(m, g=-9.8):
+    return m * np.array([0.0, g, 0.0])

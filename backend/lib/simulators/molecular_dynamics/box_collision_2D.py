@@ -14,8 +14,10 @@ class BoxCollision2D(BaseSimulator):
         self._time_history = []
         self._positions_history = []
         self._kinetic_energy_history = []
+        self._colors_history = []
         self._on_update_params()
         self._init_particles(scale=0.3)
+        self._colors_history.append(self._colors.copy())
         self._init_cell()
         self._kinetic_energy_history.append(self._get_kinetic_energy())
         self._positions_history.append(self._positions.reshape([-1, 3]).copy().tolist())
@@ -27,7 +29,7 @@ class BoxCollision2D(BaseSimulator):
         if self._is_running is False:
             return
         self._time += dt
-
+        calc_num = 0
         next_pos = np.zeros([self._n_paricles, 3])
         f = np.zeros([self._n_paricles, 3])
         for i in range(self._n_paricles):
@@ -39,6 +41,7 @@ class BoxCollision2D(BaseSimulator):
                     continue
                 f[i] += lennard_jones(self._positions[i], self._positions[particle_id],
                                     float(self._params['epsilon']), float(self._params['sigma']))
+                calc_num += 1
             f[i] += gravity(self._mass[i])
             # calc next particle positions r_t+1
             pos = self._positions[i] + dt*self._velocities[i] + f[i] * dt**2 / (2.0 * self._mass[i])
@@ -64,6 +67,7 @@ class BoxCollision2D(BaseSimulator):
                     continue
                 next_f[i] += lennard_jones(self._positions[i], self._positions[particle_id],
                                     float(self._params['epsilon']), float(self._params['sigma']))
+                calc_num += 1
             next_f[i] += gravity(self._mass[i])
             # calc particle velocity v_t+1
             next_vel[i] = self._velocities[i] + (f[i] + next_f[i])*dt/(2.0*self._mass[i])
@@ -75,6 +79,7 @@ class BoxCollision2D(BaseSimulator):
         self._time_history = self._time_history[-self._MAX_HISTORY:]
         self._kinetic_energy_history.append(self._get_kinetic_energy())
         self._kinetic_energy_history = self._kinetic_energy_history[-self._MAX_HISTORY:]
+        print(calc_num)
 
     def get_states(self, n=1):
         """最新状態をn個返す
@@ -82,19 +87,29 @@ class BoxCollision2D(BaseSimulator):
         states = {
             'box_positions': self._positions_history[-n:],
             'time': self._time_history[-n:],
-            'kinetic_energy': self._kinetic_energy_history[-n:]
+            'kinetic_energy': self._kinetic_energy_history[-n:],
+            'colors': self._colors_history[-n:]
         }
         return states
 
-    def _init_particles(self, scale=1.0, box_height=15):
+    def _init_particles(self, scale=1.0, box_height=10):
         # box
         self._positions = np.array([[x, y, 0.0] for x in np.arange(int(self._params['box_dim_x'])) for y in np.arange(int(self._params['box_dim_y']))])
         self._positions -= np.array([0.5*float(self._params['box_dim_x']), 0.5*float(self._params['box_dim_y']), 0.0])
         self._positions *= scale
         self._positions += np.array([0.0, box_height, 0.0])
-        self._velocities = np.array([[0.0, 0.0, 0.0] for x in np.arange(int(self._params['box_dim_x'])) for y in np.arange(int(self._params['box_dim_y']))])
-        self._n_paricles += int(self._params['box_dim_x']) * int(self._params['box_dim_y'])
-        self._mass = np.array([self._params['mass1']]*self._n_paricles)
+        self._velocities = np.array([[0.0, -20.0, 0.0] for x in np.arange(int(self._params['box_dim_x'])) for y in np.arange(int(self._params['box_dim_y']))])
+        self._n_paricles = int(self._params['box_dim_x']) * int(self._params['box_dim_y'])
+        self._mass = [float(self._params['mass1'])]*self._n_paricles
+        self._colors = [0xff0000]*self._n_paricles
+
+        # ground
+        self._positions = np.vstack((self._positions, np.array([[x-0.5*float(self._params['ground_dim_x']), y, 0.0] for x in np.arange(int(self._params['ground_dim_x'])) for y in np.arange(int(self._params['ground_dim_y']))])*scale))
+        self._velocities = np.vstack((self._velocities, np.array([[0.0, 0.0, 0.0] for x in np.arange(int(self._params['ground_dim_x'])) for y in np.arange(int(self._params['ground_dim_y']))])))
+        self._n_paricles += 80*10
+        self._mass += [float(self._params['mass2'])]*(int(self._params['ground_dim_x'])*int(self._params['ground_dim_y']))
+        self._colors += [0x0000ff]*(80*10)
+
 
     def _get_around_particles(self, cell_id_x, cell_id_y):
         """隣接セル内の粒子のIDリストを取得する
