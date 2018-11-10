@@ -30,7 +30,13 @@ class BouncingBall(BaseSimulator):
         #print('t : {}\nvel_y : {}\nheight : {}'.format(self._time, self._vel_y, self._height))
 
     def get_states(self, n=1):
-        """最新状態(位置など)をn個返す
+        """Return last n states of simulation.
+
+        Args:
+            n (int): The number of states.
+
+        Returns:
+            states (json): The json data of latest n states.
         """
         states = {
             'height': self._height_history[-n:],

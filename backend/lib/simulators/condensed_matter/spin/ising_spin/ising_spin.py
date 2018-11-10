@@ -65,7 +65,13 @@ class IsingSpin2D(BaseSimulator):
         self._colors_history = self._colors_history[-self._MAX_HISTORY:]
 
     def get_states(self, n=1):
-        """最新状態(位置など)をn個返す
+        """Return last n states of simulation.
+
+        Args:
+            n (int): The number of states.
+
+        Returns:
+            states (json): The json data of latest n states.
         """
         states = {
             'directions': self._spins_history[-n:],

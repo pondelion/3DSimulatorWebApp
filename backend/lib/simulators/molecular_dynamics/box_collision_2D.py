@@ -25,7 +25,7 @@ class BoxCollision2D(BaseSimulator):
         self._time_history.append(self._time)
 
     def update(self, dt):
-        """Velocity-Stormer-Verlet法で粒子の位置更新
+        """Update positions and velocities of particles by Velocity-Stormer-Verlet method.
         """
         if self._is_running is False:
             return
@@ -90,7 +90,13 @@ class BoxCollision2D(BaseSimulator):
         print(calc_num)
 
     def get_states(self, n=1):
-        """最新状態をn個返す
+        """Return last n states of simulation.
+
+        Args:
+            n (int): The number of states.
+
+        Returns:
+            states (json): The json data of latest n states.
         """
         states = {
             'box_positions': self._positions_history[-n:],
@@ -101,6 +107,12 @@ class BoxCollision2D(BaseSimulator):
         return states
 
     def _init_particles(self, scale=1.0, box_height=10):
+        """Initialize particles.
+
+        Args:
+            scale (float): The distance scaling factor of positions between each particle.
+            box_height (float): The initila box height.
+        """
         # box
         self._positions = np.array([[x, y, 0.0] for x in np.arange(int(self._params['box_dim_x'])) for y in np.arange(int(self._params['box_dim_y']))])
         self._positions -= np.array([0.5*float(self._params['box_dim_x']+0.08), 0.5*float(self._params['box_dim_y']+0.08), 0.0])
@@ -120,7 +132,14 @@ class BoxCollision2D(BaseSimulator):
 
 
     def _get_around_particles(self, cell_id_x, cell_id_y):
-        """隣接セル内の粒子のIDリストを取得する
+        """Return particle id list in specified cell and adjuscent cells.
+
+        Args:
+            cell_id_x (int): The x value of cell id.
+            cell_id_y (int): The y value of cell id.
+
+        Returns:
+            particle_ids (list of int): The particle id list in specified cell and adjuscent cells.
         """
         particle_ids = []
         for dx, dy in ((-1, 0), (0, -1), (0, 0), (1, 0), (0, 1)):
@@ -134,7 +153,7 @@ class BoxCollision2D(BaseSimulator):
         return particle_ids
 
     def _init_cell(self):
-        """セルに所属する粒子IDリストを初期化
+        """Initialize particle ID list in each cell.
         """
         self._particle_ids_cell = [[[] for y in range(self._cell_num_y)] for x in range(self._cell_num_x)]
         for particle_id in range(self._n_paricles):
@@ -145,6 +164,16 @@ class BoxCollision2D(BaseSimulator):
                 print('{} : {}'.format(cell_id_x, cell_id_y))
 
     def _get_cell_id(self, x, y):
+        """Transform from particle position (x, y) to cell id
+
+        Args:
+            x (float): The x value of particle position.
+            y (float): The y value of particle position.
+
+        Returns:
+            cell_id_x (int): The x value of cell id.
+            cell_id_y (int): The y value of cell id.
+        """
         cell_id_x = int((x - self._domain_x_min) / self._cutoff_r)
         cell_id_y = int((y - self._domain_y_min) / self._cutoff_r)
         return (cell_id_x, cell_id_y)
@@ -160,6 +189,11 @@ class BoxCollision2D(BaseSimulator):
         self._mass = np.array([self._params['mass1']]*self._n_paricles)
 
     def _get_kinetic_energy(self):
+        """Calculate kinetic energy of all particles.
+
+        Returns:
+            energy (float): The kinetic energy of all particles.
+        """
         energy = 0.0
         for i in range(self._n_paricles):
             energy += 0.5 * self._mass[i] * sum(self._velocities[i]*self._velocities[i])

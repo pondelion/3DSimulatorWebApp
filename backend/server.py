@@ -38,7 +38,7 @@ def set_simulator():
 
 @app.route('/run_simulation')
 def run_simulation():
-    """シミュレートを実行する
+    """Run simulation.
     """
     ip = request.remote_addr
     simulator_name = request.args.get('simulator')
@@ -50,7 +50,7 @@ def run_simulation():
 
 @app.route('/stop_simulation')
 def stop_simulation():
-    """シミュレートを一時停止する
+    """Stop simulation.
     """
     ip = request.remote_addr
     simulator_name = request.args.get('simulator')
@@ -62,7 +62,7 @@ def stop_simulation():
 
 @app.route('/finish_simulation')
 def finish_simulation():
-    """シミュレートを終了
+    """Finish simulation.
     """
     ip = request.remote_addr
     simulator_name = request.args.get('simulator')
@@ -74,7 +74,7 @@ def finish_simulation():
 
 @app.route('/set_params')
 def set_params():
-    """パラメータをセットする。
+    """Set parameters.
     """
     args = dict(request.args)
     simulator_name = args.pop('simulator')
@@ -93,7 +93,7 @@ def set_params():
 
 @app.route('/get_param_names')
 def get_param_names():
-    """指定のシミュレータのパラメータ名リストを返す。
+    """Get paramters of specified simulator.
     """
     simulator_name = request.args.get('simulator')
     print('get_param_names : ', simulator_name)
@@ -113,6 +113,8 @@ def get_param_names():
 
 @app.route('/get_objects')
 def get_objects():
+    """Get objects of specified simulator.
+    """
     simulator_name = request.args.get('simulator')
     objects = conf['SIMULATORS'][simulator_name]['OBJECTS']
     print(objects)
@@ -125,6 +127,8 @@ def get_objects():
 
 @app.route('/get_states')
 def get_states():
+    """Get last n states of specified simulator.
+    """
     n = request.args.get('n', default=1)
     simulator_name = request.args.get('simulator')
     ip = request.remote_addr
@@ -138,6 +142,8 @@ def get_states():
 
 @app.route('/get_states_definition')
 def get_states_definition():
+    """Get states definition of specified simulator.
+    """
     simulator_name = request.args.get('simulator')
     stetes_definition = conf['SIMULATORS'][simulator_name]['STATES_DEFINITION']
     res = jsonify({
@@ -157,6 +163,8 @@ def get_states_streaming():
 
 @app.route('/init_simulation')
 def init_simulation():
+    """Initilize specified simulator.
+    """
     ip = request.remote_addr
     simulator_name = request.args.get('simulator')
     simulator_runner.init(ip, simulator_name)
