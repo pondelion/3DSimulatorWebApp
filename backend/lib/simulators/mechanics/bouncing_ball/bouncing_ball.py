@@ -1,5 +1,5 @@
-from .._base_simulator import BaseSimulator
-from ...solver.solver import euler
+from ..._base_simulator import BaseSimulator
+from ....solver.solver import euler
 
 
 class BouncingBall(BaseSimulator):

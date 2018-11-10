@@ -1,7 +1,7 @@
 import numpy as np
 import datetime
 from time import sleep
-from .._base_simulator import BaseSimulator
+from ...._base_simulator import BaseSimulator
 
 
 class IsingSpin2D(BaseSimulator):

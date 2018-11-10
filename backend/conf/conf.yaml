@@ -1,6 +1,6 @@
 SIMULATORS:
   bouncing_ball:
-    MODULE_NAME: lib.simulators.bouncing_ball.bouncing_ball
+    MODULE_NAME: lib.simulators.mechanics.bouncing_ball.bouncing_ball
     CLASS_NAME: BouncingBall
     PARAM_NAMES: 
       initial_height:
@@ -86,7 +86,7 @@ SIMULATORS:
         initial_rotation_z : 0
 
   flow_particles:
-    MODULE_NAME: lib.simulators.flow_particles.flow_particles
+    MODULE_NAME: lib.simulators.fluid_dynamics.flow_particles.flow_particles
     CLASS_NAME: FlowParticles
     PARAM_NAMES: 
       flow_field_x:
@@ -119,6 +119,7 @@ SIMULATORS:
         list: True
       time:
         property: time
+        display: True
     OBJECTS:
       particle:
         object_type: sprite
@@ -137,7 +138,7 @@ SIMULATORS:
         opacity: 0.05
 
   ising_spin2d:
-    MODULE_NAME: lib.simulators.ising_spin.ising_spin
+    MODULE_NAME: lib.simulators.condensed_matter.spin.ising_spin.ising_spin
     CLASS_NAME: IsingSpin2D
     PARAM_NAMES:
       initial_temperature:
