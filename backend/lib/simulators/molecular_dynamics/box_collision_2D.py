@@ -1,6 +1,7 @@
 import numpy as np
 from .._base_simulator import BaseSimulator
-from .force import lennard_jones, gravity
+from ...physics.force.one_body import gravity
+from ...physics.force.two_body import lennard_jones
 
 
 class BoxCollision2D(BaseSimulator):
@@ -28,6 +29,7 @@ class BoxCollision2D(BaseSimulator):
         """
         if self._is_running is False:
             return
+        dt = min(dt, 0.01)
         self._time += dt
         calc_num = 0
         next_pos = np.zeros([self._n_paricles, 3])
@@ -43,6 +45,7 @@ class BoxCollision2D(BaseSimulator):
                                     float(self._params['epsilon']), float(self._params['sigma']))
                 calc_num += 1
             f[i] += gravity(self._mass[i])
+            f[i] -= 0.1*self._velocities[i]
             # calc next particle positions r_t+1
             pos = self._positions[i] + dt*self._velocities[i] + f[i] * dt**2 / (2.0 * self._mass[i])
             next_pos[i] = pos
@@ -51,6 +54,10 @@ class BoxCollision2D(BaseSimulator):
         next_pos[:, 1][next_pos[:, 1] > self._domain_y_max] = self._domain_y_max
         next_pos[:, 1][next_pos[:, 1] < self._domain_y_min] = self._domain_y_min
         self._positions = next_pos
+        self._velocities[:, 0][next_pos[:, 0] > self._domain_x_max] = -0.8*self._velocities[:, 0][next_pos[:, 0] > self._domain_x_max]
+        self._velocities[:, 0][next_pos[:, 0] < self._domain_x_min] = -0.8*self._velocities[:, 0][next_pos[:, 0] < self._domain_x_min]
+        self._velocities[:, 1][next_pos[:, 1] > self._domain_y_max] = -0.8*self._velocities[:, 1][next_pos[:, 1] > self._domain_y_max]
+        self._velocities[:, 1][next_pos[:, 1] < self._domain_y_min] = -0.8*self._velocities[:, 1][next_pos[:, 1] < self._domain_y_min]
 
         # update particle_ids_cell according to updated positions
         self._init_cell()
@@ -69,6 +76,7 @@ class BoxCollision2D(BaseSimulator):
                                     float(self._params['epsilon']), float(self._params['sigma']))
                 calc_num += 1
             next_f[i] += gravity(self._mass[i])
+            next_f[i] -= 0.1*self._velocities[i]
             # calc particle velocity v_t+1
             next_vel[i] = self._velocities[i] + (f[i] + next_f[i])*dt/(2.0*self._mass[i])
         self._velocities = next_vel
@@ -95,7 +103,7 @@ class BoxCollision2D(BaseSimulator):
     def _init_particles(self, scale=1.0, box_height=10):
         # box
         self._positions = np.array([[x, y, 0.0] for x in np.arange(int(self._params['box_dim_x'])) for y in np.arange(int(self._params['box_dim_y']))])
-        self._positions -= np.array([0.5*float(self._params['box_dim_x']), 0.5*float(self._params['box_dim_y']), 0.0])
+        self._positions -= np.array([0.5*float(self._params['box_dim_x']+0.08), 0.5*float(self._params['box_dim_y']+0.08), 0.0])
         self._positions *= scale
         self._positions += np.array([0.0, box_height, 0.0])
         self._velocities = np.array([[0.0, -20.0, 0.0] for x in np.arange(int(self._params['box_dim_x'])) for y in np.arange(int(self._params['box_dim_y']))])

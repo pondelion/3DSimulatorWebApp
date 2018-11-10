@@ -357,6 +357,9 @@ function init() {
             case "material_color":
                 object.material.color.set(val);
                 break;
+            case "hex":
+                object.material.color.setHex(val);
+                break;
         } 
     }
 
