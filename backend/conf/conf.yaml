@@ -323,3 +323,40 @@ SIMULATORS:
         initial_size_y: 90
         initial_size_z: 2
         opacity: 0.025
+
+  hydrogen_electron:
+    MODULE_NAME: lib.simulators.quantum.hydrogen_electron
+    CLASS_NAME: HydrogenElectronDistribution
+    PARAM_NAMES: 
+      n:
+        param_type: selection
+        values: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        default: 1
+      l:
+        param_type: selection
+        values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        default: 0
+      m:
+        param_type: selection
+        values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        default: 0
+    STATES_DEFINITION:
+      electron_positions:
+        property: position
+        object_name: electrons
+        list: True
+      colors:
+        property: hex
+        object_name: electrons
+        list: True
+      time:
+        property: time
+        display: True
+    OBJECTS:
+      electrons:
+        object_type: sphere
+        num: 500
+        initial_pos_x: 0
+        initial_pos_y: 0
+        initial_pos_z: 0
+        initial_radius: 0.1
