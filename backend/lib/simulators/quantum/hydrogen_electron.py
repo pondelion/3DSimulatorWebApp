@@ -1,7 +1,7 @@
 import numpy as np
 from .._base_simulator import BaseSimulator
 from ...utils.data_util import sampling
-from ...physics.distribution.hydrogen_like import hydrogen_electron_dist_cumsum
+from ...physics.distribution.hydrogen_like import hydrogen_electron_dist
 
 
 class HydrogenElectronDistribution(BaseSimulator):
@@ -22,7 +22,7 @@ class HydrogenElectronDistribution(BaseSimulator):
         self._time_history.append(self._time)
 
     def update(self, dt):
-        """Update positions and velocities of particles by Velocity-Stormer-Verlet method.
+        """Keep generating electron according to hydrogen electron distribution for nlm.
         """
         if self._is_running is False:
             return
@@ -35,16 +35,13 @@ class HydrogenElectronDistribution(BaseSimulator):
 
         start_time = datetime.datetime.now()
         while (datetime.datetime.now() - start_time).total_seconds() < dt:
-            R_dist, Y_dist = hydrogen_electron_dist(
-                                self._r, self._theta, self._phi, n=self._n, l=self._l, m=self._m, Z=1
-                            )
-            r_idxs = sampling(R_dist, num=100)
-            theta_idxs, phi_idxs = sampling(Y_dist, num=100)
+            r_idxs = sampling(self._R_dist, num=100)
+            theta_idxs, phi_idxs = sampling(self._Y_dist, num=100)
             xyz = [
                 [sefl._r[r_idx]*np.sin(self._theta[theta.idx])*np.cos(self._phi[phi_idx]), sefl._r[r_idx]*np.sin(self._theta[theta.idx])*np.sin(self._phi[phi_idx]), sefl._r[r_idx]*np.cos(self._theta[theta.idx])] /
                     for r_idx, theta_idx, phi_idx in zip(r_idxs, theta_idxs, phi_idxs)
             ]
-            self._positions_history += list(zip(self._r[]))
+            self._positions_history += xyz
             self._positions_history = self._positions_history[-self._MAX_HISTORY:]
 
         self._time_history.append(self._time)
@@ -69,7 +66,10 @@ class HydrogenElectronDistribution(BaseSimulator):
     def _on_update_params(self):
         self._n = int(self._params['n'])
         self._l = int(self._params['l'])
-        self._m = int(self._params[''])
+        self._m = int(self._params['m'])
+        self._R_dist, self._Y_dist = hydrogen_electron_dist(
+                                        self._r, self._theta, self._phi, n=self._n, l=self._l, m=self._m, Z=1
+                                    )
 
     def _nlm_check(n, l, m):
         if n <= l:
