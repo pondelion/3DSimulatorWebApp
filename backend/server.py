@@ -83,6 +83,9 @@ def set_params():
     for key, val in args.items():
         if data_type[0] == 'numeric':
             params[key] = float(val[0])
+        elif data_type[0] == 'str':
+            params[key] = val[0]
+
     print(params)
     ip = request.remote_addr
     simulator_runner.set_params(ip, simulator_name[0], params)

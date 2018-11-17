@@ -101,6 +101,25 @@ function init() {
                 } else if (paramNames[paramName].param_type == "checkbox") {
                     controls[paramName] = paramNames[paramName].default
                     gui.add(controls, paramName)
+                } else if (paramNames[paramName].param_type == "selection") {
+                    controls[paramName] = paramNames[paramName].default
+                    gui.add(controls, paramName, paramNames[paramName].values)
+                        .onChange(function(newValue) {
+                            var params = {}
+                            for (var paramName in paramNames) {
+                                params[this.property] = controls[this.property];
+                            }
+                            setParams(ip, port, function () {}, controls.simulators, params, 'str');
+                            if (paramObjs[this.property]) {
+                                if (objs[paramObjs[this.property].object_name]) {
+                                    setObjectProperty(
+                                        objs[paramObjs[this.property].object_name].object,
+                                        paramObjs[this.property].property,
+                                        controls[this.property]
+                                    );
+                                }
+                            }
+                        });
                 }
 
                 if (paramNames[paramName].object_name) {
