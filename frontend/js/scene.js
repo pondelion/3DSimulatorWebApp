@@ -23,12 +23,12 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
 
-    // camera.position.x = -30;
-    // camera.position.y = 20;
-    // camera.position.z = 40;
-    camera.position.x = 0;
-    camera.position.y = 3;
-    camera.position.z = 0.5;
+    camera.position.x = -30;
+    camera.position.y = 20;
+    camera.position.z = 40;
+    // camera.position.x = 0;
+    // camera.position.y = 3;
+    // camera.position.z = 0.5;
     camera.lookAt(scene.position);
 
     var ambientLight = new THREE.AmbientLight(0x0c0c0c);

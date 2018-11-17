@@ -14,7 +14,8 @@ def R(n, l, r, Z=1):
 def Y(l, m, theta, phi):
     """Azimuthal wave function of hydrogen electron.
     """
-    return spherial_harminic(l, m, theta, phi)
+    theta_mesh, phi_mesh = np.meshgrid(theta, phi)
+    return spherial_harminic(l, m, theta_mesh, phi_mesh)
 
 
 def R_dist(n, l, r, Z=1):
