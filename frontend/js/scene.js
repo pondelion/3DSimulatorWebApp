@@ -3,8 +3,8 @@ function init() {
     var ip = "127.0.0.1";
     var port = "5000";
     var paramNames = {};
-    var objs = {};  // {オブジェクト名: オブジェクトインスタンス}の辞書
-    var paramObjs = {};  // {パラメータ名: {'object': オブジェクトインスタンス, 'param}}
+    var objs = {};
+    var paramObjs = {};
     var statesDefinition = {};
     var displayValues = {};
     var rotateCamera = false;
