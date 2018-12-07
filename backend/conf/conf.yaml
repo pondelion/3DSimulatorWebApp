@@ -138,7 +138,7 @@ SIMULATORS:
         opacity: 0.05
 
   ising_spin2d:
-    MODULE_NAME: lib.simulators.condensed_matter.spin.ising_spin.ising_spin_2D
+    MODULE_NAME: lib.simulators.condensed_matter.spin.ising.ising_spin_2D
     CLASS_NAME: IsingSpin2D
     PARAM_NAMES:
       initial_temperature:
@@ -210,7 +210,7 @@ SIMULATORS:
         num: 400
 
   ising_spin3d:
-    MODULE_NAME: lib.simulators.condensed_matter.spin.ising_spin.ising_spin_3D
+    MODULE_NAME: lib.simulators.condensed_matter.spin.ising.ising_spin_3D
     CLASS_NAME: IsingSpin3D
     PARAM_NAMES:
       initial_temperature:
