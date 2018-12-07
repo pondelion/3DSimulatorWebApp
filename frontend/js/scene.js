@@ -263,6 +263,7 @@ function init() {
         if (rotateCamera) {
             camera.position.x = 40 * Math.cos(count*0.01);
             camera.position.z = 40 * Math.sin(count*0.01);
+            camera.position.y = 20 * Math.sin(count*0.04);
             camera.lookAt(new THREE.Vector3(0, 0, 0))
         }
 

@@ -138,7 +138,7 @@ SIMULATORS:
         opacity: 0.05
 
   ising_spin2d:
-    MODULE_NAME: lib.simulators.condensed_matter.spin.ising_spin.ising_spin
+    MODULE_NAME: lib.simulators.condensed_matter.spin.ising_spin.ising_spin_2D
     CLASS_NAME: IsingSpin2D
     PARAM_NAMES:
       initial_temperature:
@@ -208,6 +208,85 @@ SIMULATORS:
         initial_rotation_y : 0
         initial_rotation_z : 0
         num: 400
+
+  ising_spin3d:
+    MODULE_NAME: lib.simulators.condensed_matter.spin.ising_spin.ising_spin_3D
+    CLASS_NAME: IsingSpin3D
+    PARAM_NAMES:
+      initial_temperature:
+        param_type: slider_textbox
+        max: 1000
+        min: 1
+        default: 10
+        step: 1
+      final_temperature:
+        param_type: slider_textbox
+        max: 1000
+        min: 1
+        default: 1000
+        step: 1
+      sweep_rate_sec:
+        param_type: slider_textbox
+        max: 50
+        min: 0.1
+        default: 50
+        step: 0.1
+      dimension_x:
+        param_type: slider_textbox
+        max: 100
+        min: 2
+        default: 20
+        step: 1
+      dimension_y:
+        param_type: slider_textbox
+        max: 100
+        min: 2
+        default: 20
+        step: 1
+      dimension_z:
+        param_type: slider_textbox
+        max: 100
+        min: 2
+        default: 20
+        step: 1
+      exchange_interaction:
+        param_type: slider_textbox
+        max: 1000
+        min: 0
+        default: 30
+        step: 0.1
+    STATES_DEFINITION:
+      directions:
+        property: rotation_x
+        object_name: spin
+        list: True
+      positions:
+        property: position
+        object_name: spin
+        list: True
+      colors:
+        property: color
+        object_name: spin
+        list: True
+      time:
+        property: time
+      temperature:
+        property: temperature
+        display: True
+      magnetization:
+        property: phyisical_quantity
+        display: True
+    OBJECTS:
+      spin:
+        object_type: arrow
+        initial_pos_x: 0
+        initial_pos_y: 0
+        initial_pos_z: 0
+        initial_rotation_x : 0
+        initial_rotation_y : 0
+        initial_rotation_z : 0
+        num: 8000
+        opacity: 0.025
 
   box_collision_2D:
     MODULE_NAME: lib.simulators.molecular_dynamics.box_collision_2D

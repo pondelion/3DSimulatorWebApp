@@ -4,9 +4,10 @@
 
 ![ball2](https://github.com/pondelion/3DSimulatorWebApp/blob/master/gallary/ball4.gif?raw=true)
 
-- ising_spin_2D
+- ising_spin
 
 ![ising2d](https://github.com/pondelion/3DSimulatorWebApp/blob/master/gallary/ising2d_1.gif?raw=true)
+![ising3d](https://github.com/pondelion/3DSimulatorWebApp/blob/master/gallary/ising3d_1.gif?raw=true)
 
 - flow_particles
 
