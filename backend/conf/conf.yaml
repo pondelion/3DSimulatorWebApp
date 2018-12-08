@@ -229,7 +229,7 @@ SIMULATORS:
         param_type: slider_textbox
         max: 50
         min: 0.1
-        default: 50
+        default: 70
         step: 0.1
       dimension_x:
         param_type: slider_textbox

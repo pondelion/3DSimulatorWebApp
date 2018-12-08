@@ -24,7 +24,7 @@ class IsingSpin3D(BaseSimulator):
         self._spins_history.append(self._spins.flatten().copy().tolist())
         self._colors_history = []
         self._colors_history.append([0xff0000 if dir == 1 else 0x0000ff for dir in self._spins.flatten()])
-        self._init_positions(dx=3, dy=3)
+        self._init_positions()
         self._temperature_hist = []
         self._temperature_hist.append(self._temperature)
 
