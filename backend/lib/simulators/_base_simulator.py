@@ -1,7 +1,7 @@
 from abc import *
 import json
 from time import sleep
-from ..utils.util import load_params
+from ..utils.common import load_params
 
 
 class BaseSimulator:
@@ -86,7 +86,8 @@ class BaseSimulator:
     @abstractclassmethod
     def get_states(self, n=1):
         """Get last n states of simulation.
-        The states depends on each simulator.
+        The states depends on each simulator and must be same as
+        configurations defined in conf.yaml.
         Subclass must override this method.
 
         Args:
