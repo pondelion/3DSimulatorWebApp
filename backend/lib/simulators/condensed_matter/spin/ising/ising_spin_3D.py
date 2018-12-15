@@ -49,6 +49,8 @@ class IsingSpin3D(BaseSimulator):
             for dx in range(-1, 2):
                 for dy in range(-1, 2):
                     for dz in range(-1, 2):
+                        if dx == 0 and dy == 0 and dz == 0:
+                            continue
                         try:
                             cur_energy += self._spins[idx+dx, idy+dy, idz+dz]
                         except IndexError:

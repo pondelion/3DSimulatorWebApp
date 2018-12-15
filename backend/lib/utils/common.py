@@ -1,5 +1,9 @@
 import yaml
 import os
+from logging import basicConfig, getLogger, DEBUG
+
+
+basicConfig(level=DEBUG)
 
 
 def load_params(simulator, file_path='conf/conf.yaml'):
@@ -18,3 +22,18 @@ def load_params(simulator, file_path='conf/conf.yaml'):
     for param_name, val in conf['SIMULATORS'][simulator]['PARAM_NAMES'].items():
         params[param_name] = val['default']
     return params
+
+
+def get_logger(name):
+    return gettLogger(name)
+
+
+def density2color(densitiy: float)->:
+    """Convert density to hex color
+
+    Args:
+        density (float): Density
+
+    Returns:
+        hex
+    """
