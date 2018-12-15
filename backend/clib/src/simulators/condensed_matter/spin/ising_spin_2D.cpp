@@ -12,7 +12,7 @@ IsingSpin2D::IsingSpin2D(int dimX, int dimY, double initTemperature) :
 void IsingSpin2D::update(double dt)
 {
     using namespace std;
-    //random_device rd
+
     chrono::system_clock::time_point start;
     double elapsed;
     start = chrono::system_clock::now();
@@ -21,7 +21,6 @@ void IsingSpin2D::update(double dt)
         mCnt++;
         for (auto i = 0; i < mDimX; ++i) {
             for (auto j = 0; j < mDimY; ++j) {
-                //mArr[i][j] = mCnt;
                 if (0.5 < (rd()+1)/RAND_MAX) {
                     mSpins(i, j) = 1;
                 } else {

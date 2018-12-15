@@ -32,9 +32,7 @@ private:
 BOOST_PYTHON_MODULE(ising_spin_2D) {
     Py_Initialize();
     np::initialize();
-    p::class_<IsingSpin2D>(
-        "IsingSpin2D", 
-        p::init<int, int, double>())
+    p::class_<IsingSpin2D>("IsingSpin2D", p::init<int, int, double>())
         .def("update", &IsingSpin2D::update)
         .def("getSpins", &IsingSpin2D::getSpins)
         .def("setTemperature", &IsingSpin2D::setTemperature);

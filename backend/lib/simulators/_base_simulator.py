@@ -6,7 +6,7 @@ from ..utils.common import load_params
 
 class BaseSimulator:
 
-    def __init__(self, simulator_name):
+    def __init__(self, simulator_name, use_clib=False):
         """Init function
 
         Args:
@@ -20,6 +20,7 @@ class BaseSimulator:
         self._minimal_dt = 0.01
         self._is_finished = False
         self._params = load_params(self._simulator_name)
+        self._use_clib = use_clib
         self.init()
 
     def run(self):
