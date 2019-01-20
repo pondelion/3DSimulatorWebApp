@@ -37,3 +37,4 @@ def density2color(densitiy: float):
     Returns:
         hex
     """
+    pass

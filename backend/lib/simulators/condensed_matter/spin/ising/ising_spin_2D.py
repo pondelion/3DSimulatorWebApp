@@ -13,8 +13,8 @@ class IsingSpin2D(BaseSimulator):
     def init(self):
         self._temperature = float(self._params['initial_temperature'])
         self._sweep_rate = float(self._params['sweep_rate_sec'])
-        self._dimension_x = self._params['dimension_x']
-        self._dimension_y = self._params['dimension_y']
+        self._dimension_x = int(self._params['dimension_x'])
+        self._dimension_y = int(self._params['dimension_y'])
         self._exchange_interaction = float(self._params['exchange_interaction'])
         self._spins = np.ones([self._params['dimension_x'], self._params['dimension_y']])
         self._time_history = []
@@ -26,6 +26,9 @@ class IsingSpin2D(BaseSimulator):
         self._init_positions(dx=3, dy=3)
         self._temperature_hist = []
         self._temperature_hist.append(self._temperature)
+        if self._use_clib:
+            from clib.bin.unix.simulators.condensed_matter.spin import ising_spin_2D as is2
+            self._is2 = is2.IsingSpin2D(self._dimension_x, self._dimension_y, self._temperature)
 
     def update(self, dt):
         if self._is_running is False:
@@ -38,23 +41,30 @@ class IsingSpin2D(BaseSimulator):
             (self._temperature - int(self._params['final_temperature'])) < 0:
             self._temperature = int(self._params['final_temperature'])
         self._temperature_hist.append(self._temperature)
-        start_time = datetime.datetime.now()
-        while (datetime.datetime.now() - start_time).total_seconds() < dt:
-            idx = np.random.randint(0, self._dimension_x)
-            idy = np.random.randint(0, self._dimension_y)
-            cur_energy = 0.
-            j = float(self._params['exchange_interaction'])
-            for dx, dy in ((-1, 0), (1, 0), (0, 1), (0, -1)):
-                try:
-                    cur_energy += self._spins[idx+dx, idy+dy]
-                except IndexError:
-                    pass
-            cur_energy *= (-j * self._spins[idx, idy])
-            flip_energy = -cur_energy
-            if np.random.rand() < 0.000001:
-                self._spins[idx, idy] *= -1
-            elif np.random.rand() < min(np.exp(-(flip_energy-cur_energy)/self._temperature), 1.):
-                self._spins[idx, idy] *= -1
+
+        if not self._use_clib:
+            start_time = datetime.datetime.now()
+            while (datetime.datetime.now() - start_time).total_seconds() < dt:
+                idx = np.random.randint(0, self._dimension_x)
+                idy = np.random.randint(0, self._dimension_y)
+                cur_energy = 0.
+                j = float(self._params['exchange_interaction'])
+                for dx, dy in ((-1, 0), (1, 0), (0, 1), (0, -1)):
+                    try:
+                        cur_energy += self._spins[idx+dx, idy+dy]
+                    except IndexError:
+                        pass
+                cur_energy *= (-j * self._spins[idx, idy])
+                flip_energy = -cur_energy
+                if np.random.rand() < 0.000001:
+                    self._spins[idx, idy] *= -1
+                elif np.random.rand() < min(np.exp(-(flip_energy-cur_energy)/self._temperature), 1.):
+                    self._spins[idx, idy] *= -1
+        else:
+            self._is2.setTemperature(self._temperature)
+            self._is2.update(dt)
+            self._spins = self._is2.getSpins()
+
         self._spins_history.append(((self._spins + 1) * np.pi * 0.5).flatten().copy().tolist())
         self._spins_history = self._spins_history[-self._MAX_HISTORY:]
         self._magnetization_history.append(self._get_normalized_magnetizastion())

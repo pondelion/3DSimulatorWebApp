@@ -1,6 +1,6 @@
 function init() {
     var isSimulating = false;
-    var ip = "127.0.0.1";
+    var ip = "192.168.111.103";
     var port = "5000";
     var paramNames = {};
     var objs = {};
@@ -54,6 +54,7 @@ function init() {
 
     gui.add(controls, "ip").onChange(function(newIP) {
         ip = newIP;
+        getSimulators(ip, port, getSimulatorsCallback);
     });
     gui.add(controls, "port").onChange(function(newPORT) {
         port = newPORT;
@@ -238,17 +239,24 @@ function init() {
         }
     };
     
+    var simulatorsAdded = false;
+    var simulatorsItem;
     getSimulatorsCallback = function() {
         if (this.readyState == 4) {
             console.log(this.responseText);
-            gui.add(controls, "simulators")
-                .options(JSON.parse(this.responseText).simulators)
-                .onChange(function(selectedSimulator) {
-                    setSimulator(ip, port, setSimulatorCallback, selectedSimulator);
-                    getParamNames(ip, port, getParamNamesCallback, selectedSimulator);
-                    getObjects(ip, port, getObjectsCallback, selectedSimulator);
-                    getStatesDefinition(ip, port, getStatesDefinitionCallback, selectedSimulator);
-                });
+            if (!simulatorsAdded) {
+                simulatorsAdded = true;
+                simulatorsItem = gui.add(controls, "simulators")
+                    .options(JSON.parse(this.responseText).simulators)
+                    .onChange(function(selectedSimulator) {
+                        setSimulator(ip, port, setSimulatorCallback, selectedSimulator);
+                        getParamNames(ip, port, getParamNamesCallback, selectedSimulator);
+                        getObjects(ip, port, getObjectsCallback, selectedSimulator);
+                        getStatesDefinition(ip, port, getStatesDefinitionCallback, selectedSimulator);
+                    });
+            } else {
+                //controls.simulators = JSON.parse(this.responseText).simulators;
+            }
         }
     };
     getSimulators(ip, port, getSimulatorsCallback);
@@ -257,6 +265,7 @@ function init() {
 
     render();
     var count = 0;
+    var stateReq = null;
 
     function render() {
         count += 1;
@@ -268,7 +277,7 @@ function init() {
         }
 
         if (controls.simulators != "") {
-            if (count % 3 == 0) {
+            if (count % 10 == 0) {
                 getStatesCallback = function() {
                     if (this.readyState == 4) {
                         var states = JSON.parse(this.responseText).states;
@@ -277,7 +286,12 @@ function init() {
                         updateDisplay(displayValues, ctx);
                     }
                 }
-                getStates(ip, port, getStatesCallback, controls.simulators);
+                try {
+                    stateReq.abort();
+                } catch (e) {
+                    console.log(e);
+                }
+                stateReq = getStates(ip, port, getStatesCallback, controls.simulators);
             }
         }
 
