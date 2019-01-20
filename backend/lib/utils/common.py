@@ -28,7 +28,7 @@ def get_logger(name):
     return gettLogger(name)
 
 
-def density2color(densitiy: float)->:
+def density2color(densitiy: float):
     """Convert density to hex color
 
     Args:

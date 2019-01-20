@@ -1,10 +1,10 @@
-from abc import *
+from abc import ABCMeta, abstractmethod
 import json
 from time import sleep
 from ..utils.common import load_params
 
 
-class BaseSimulator:
+class BaseSimulator(metaclass=ABCMeta):
 
     def __init__(self, simulator_name):
         """Init function
@@ -66,14 +66,14 @@ class BaseSimulator:
         """
         return self._minimal_dt
 
-    @abstractclassmethod
+    @abstractmethod
     def init(self):
         """Init function.
         Subclass must override this method.
         """
         raise NotImplementedError()
 
-    @abstractclassmethod
+    @abstractmethod
     def update(self, dt):
         """Update system by dt.
         Subclass must override this method.
@@ -83,7 +83,7 @@ class BaseSimulator:
         """
         raise NotImplementedError()
 
-    @abstractclassmethod
+    @abstractmethod
     def get_states(self, n=1):
         """Get last n states of simulation.
         The states depends on each simulator and must be same as
